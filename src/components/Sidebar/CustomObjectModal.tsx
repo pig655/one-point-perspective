@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { X, Box, Check } from 'lucide-react';
-import { createCuboidGeometry } from '../../core/geometry';
 import { SceneObject } from '../../models/types';
 
 interface CustomObjectModalProps {
@@ -35,7 +34,6 @@ export const CustomObjectModal: React.FC<CustomObjectModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const geom = createCuboidGeometry(width, height, depth);
 
     onAddCustomObject({
       name,
@@ -43,7 +41,6 @@ export const CustomObjectModal: React.FC<CustomObjectModalProps> = ({
       geometryType: 'cuboid',
       dimensions: { width, height, depth },
       color,
-      customGeometry: geom,
       x: 500,
       y: 450,
       z: 100,

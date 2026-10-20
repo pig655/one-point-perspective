@@ -175,13 +175,27 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
     };
   }, [draggingObjId, handlePointerMove, handlePointerUp]);
 
+  // 點擊畫布背景時取消選取物件
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    const target = e.target as Element;
+    // 若點擊目標位於任何物件內部或透視點上，絕不取消選取！
+    if (
+      target.closest('.wall-object') ||
+      target.closest('.room-floor-object') ||
+      target.closest('.vanishing-point')
+    ) {
+      return;
+    }
+    onSelectObject(null);
+  };
+
   return (
     <div className="relative w-full h-full flex items-center justify-center bg-slate-100 overflow-hidden select-none">
       <svg
         ref={svgRef}
         viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
         className="w-full h-full max-h-[82vh] shadow-xl rounded-xl border border-slate-300 bg-white"
-        onClick={() => onSelectObject(null)}
+        onClick={handleCanvasClick}
         style={{ touchAction: 'none' }}
       >
         <defs>
@@ -318,6 +332,10 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
               key={obj.id}
               className={`wall-object ${obj.isLocked ? 'cursor-not-allowed' : 'cursor-move'}`}
               onPointerDown={e => handleObjectPointerDown(e, obj)}
+              onClick={e => {
+                e.stopPropagation();
+                onSelectObject(obj.id);
+              }}
             >
               {/* 外框主體多邊形 */}
               <polygon
@@ -431,6 +449,10 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
               key={original.id}
               className={`room-floor-object ${original.isLocked ? 'cursor-not-allowed' : 'cursor-move'}`}
               onPointerDown={e => handleObjectPointerDown(e, original)}
+              onClick={e => {
+                e.stopPropagation();
+                onSelectObject(original.id);
+              }}
             >
               {/* 地面陰影 */}
               <ellipse

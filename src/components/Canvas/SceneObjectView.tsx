@@ -86,6 +86,10 @@ export const SceneObjectView: React.FC<SceneObjectViewProps> = ({
         original.isLocked ? 'cursor-not-allowed opacity-90' : 'cursor-move'
       }`}
       onPointerDown={handlePointerDown}
+      onClick={e => {
+        e.stopPropagation();
+        onSelect(original.id);
+      }}
     >
       {/* 陰影效果 (底面投影至地面參考微陰影) */}
       <ellipse

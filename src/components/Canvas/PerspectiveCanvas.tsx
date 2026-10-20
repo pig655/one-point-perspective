@@ -54,7 +54,11 @@ export const PerspectiveCanvas: React.FC<PerspectiveCanvasProps> = ({
 
   // 點擊畫布空白處取消選取
   const handleCanvasClick = (e: React.MouseEvent) => {
-    if ((e.target as Element).tagName === 'svg' || (e.target as Element).id === 'canvas-backdrop') {
+    const target = e.target as Element;
+    if (target.closest('.scene-object') || target.closest('.vanishing-point')) {
+      return;
+    }
+    if (target.tagName === 'svg' || target.id?.startsWith('canvas-backdrop')) {
       onSelectObject(null);
     }
   };

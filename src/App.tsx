@@ -232,7 +232,6 @@ export const App: React.FC = () => {
       dimensions: { ...template.defaultDimensions },
       color: template.defaultColor,
       geometryType: template.geometryType,
-      customGeometry: template.createGeometry ? template.createGeometry(template.defaultDimensions) : undefined,
       order: objects.length + 1,
       showGuidelines: true
     };

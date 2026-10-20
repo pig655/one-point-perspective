@@ -172,4 +172,39 @@ describe('單點透視核心數學模組測試 (Perspective Core Unit Tests)', (
     expect(clampedVpMin).toBe(50);
     expect(clampedVpMax).toBe(950);
   });
+
+  it('6. 驗證新加入物件改變尺寸時，投影頂點與包圍盒即時動態更新 (防止尺寸改變失效)', () => {
+    // 模擬從素材庫新加入一張課桌
+    const deskObj: SceneObject = {
+      id: 'obj-desk-new',
+      name: '學生課桌',
+      category: 'furniture',
+      x: 500,
+      y: 470,
+      z: 100,
+      dimensions: { width: 110, height: 75, depth: 80 },
+      color: '#D97706',
+      geometryType: 'desk',
+      order: 1
+    };
+
+    // 初始投影
+    const projBefore = projectSceneObject(deskObj, defaultCamera, false);
+    const widthBefore = projBefore.boundingBox.width;
+    const heightBefore = projBefore.boundingBox.height;
+
+    // 學生在面板上將課桌寬度調整為 220 (原本兩倍)，高度調整為 150
+    const updatedDeskObj: SceneObject = {
+      ...deskObj,
+      dimensions: { width: 220, height: 150, depth: 160 }
+    };
+
+    const projAfter = projectSceneObject(updatedDeskObj, defaultCamera, false);
+    const widthAfter = projAfter.boundingBox.width;
+    const heightAfter = projAfter.boundingBox.height;
+
+    // 驗證投影後的包圍盒寬度與高度皆明顯放大 (寬度約 2 倍，高度在考慮透視頂面縮小後約 1.8 倍)
+    expect(widthAfter).toBeGreaterThan(widthBefore * 1.8);
+    expect(heightAfter).toBeGreaterThan(heightBefore * 1.7);
+  });
 });
