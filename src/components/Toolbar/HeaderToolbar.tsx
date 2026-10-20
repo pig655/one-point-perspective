@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import {
-  Compass,
   Trophy,
   Undo2,
   Redo2,
@@ -85,55 +84,56 @@ export const HeaderToolbar: React.FC<HeaderToolbarProps> = ({
         {/* 左區：Logo 與雙主模式切換 */}
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-sm">
-              <Compass className="w-5 h-5 animate-spin-slow" />
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-amber-400 via-pink-500 to-indigo-500 flex items-center justify-center text-white shadow-sm text-lg">
+              🎨
             </div>
             <div>
-              <h1 className="font-extrabold text-slate-800 text-sm leading-tight">
-                單點透視互動學習教室
+              <h1 className="font-black text-slate-800 text-sm leading-tight flex items-center gap-1">
+                <span>單點透視魔法教室</span>
+                <span className="text-amber-500 text-xs">✨</span>
               </h1>
-              <p className="text-[10px] font-medium text-slate-400">國小五年級視覺藝術與空間科學</p>
+              <p className="text-[10px] font-bold text-amber-700/80">國小五年級視覺藝術與空間科學</p>
             </div>
           </div>
 
           {/* 模式一 (基礎透視) 與 模式二 (室內空間) 切換大按鈕 */}
-          <div className="flex p-1 bg-slate-100 rounded-xl border border-slate-200">
+          <div className="flex p-1 bg-amber-100/60 rounded-2xl border border-amber-200 shadow-xs">
             <button
               onClick={() => onToggleMainMode('basic')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
                 mainMode === 'basic'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-blue-600 text-white shadow-xs scale-102'
+                  : 'text-slate-600 hover:text-blue-700 hover:bg-white/60'
               }`}
             >
               <Box className="w-4 h-4" />
-              <span>基礎透視練習</span>
+              <span>🧭 基礎透視探索</span>
             </button>
             <button
               onClick={() => onToggleMainMode('room')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
                 mainMode === 'room'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-indigo-600 text-white shadow-xs scale-102'
+                  : 'text-slate-600 hover:text-indigo-700 hover:bg-white/60'
               }`}
             >
               <Home className="w-4 h-4" />
-              <span>室內空間透視</span>
+              <span>🏠 室內透視魔法屋</span>
             </button>
           </div>
 
           {/* 自由探索 vs 闖關任務 */}
-          <div className="flex p-0.5 bg-amber-50 rounded-lg border border-amber-200">
+          <div className="flex p-0.5 bg-amber-50 rounded-xl border border-amber-200">
             <button
               onClick={() => onToggleLearningMode(learningMode === 'explore' ? 'mission' : 'explore')}
-              className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all ${
+              className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-black transition-all ${
                 learningMode === 'mission'
                   ? 'bg-amber-500 text-white shadow-xs'
-                  : 'text-amber-800 hover:bg-amber-100'
+                  : 'text-amber-900 hover:bg-amber-100'
               }`}
             >
-              <Trophy className="w-3.5 h-3.5" />
-              <span>{learningMode === 'mission' ? '任務進行中' : '挑戰教學任務'}</span>
+              <Trophy className="w-3.5 h-3.5 text-yellow-300" />
+              <span>{learningMode === 'mission' ? '⭐ 任務闖關中' : '🏆 挑戰教學任務'}</span>
             </button>
           </div>
         </div>
@@ -307,35 +307,35 @@ export const HeaderToolbar: React.FC<HeaderToolbarProps> = ({
           {/* 通用開關：視平線、透視點、透視輔助線 */}
           <button
             onClick={() => onToggleViewSetting('showHorizonLine')}
-            className={`px-2 py-1 rounded-md font-semibold border transition-colors ${
+            className={`px-2.5 py-1 rounded-xl text-xs font-bold border transition-all ${
               viewSettings.showHorizonLine
-                ? 'bg-red-50 text-red-600 border-red-300'
-                : 'text-slate-400 border-transparent hover:bg-slate-100'
+                ? 'bg-red-50 text-red-600 border-red-300 shadow-xs'
+                : 'text-slate-500 border-slate-200 hover:bg-slate-50'
             }`}
           >
-            視平線
+            📏 視平線
           </button>
 
           <button
             onClick={() => onToggleViewSetting('showVanishingPoint')}
-            className={`px-2 py-1 rounded-md font-semibold border transition-colors ${
+            className={`px-2.5 py-1 rounded-xl text-xs font-bold border transition-all ${
               viewSettings.showVanishingPoint
-                ? 'bg-amber-50 text-amber-800 border-amber-300'
-                : 'text-slate-400 border-transparent hover:bg-slate-100'
+                ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-xs'
+                : 'text-slate-500 border-slate-200 hover:bg-slate-50'
             }`}
           >
-            透視點 (VP)
+            🎯 透視點 (VP)
           </button>
 
           <button
             onClick={() => onToggleViewSetting('showPerspectiveLines')}
-            className={`px-2.5 py-1 rounded-md font-semibold border transition-colors ${
+            className={`px-2.5 py-1 rounded-xl text-xs font-bold border transition-all ${
               viewSettings.showPerspectiveLines
-                ? 'bg-blue-50 text-blue-700 border-blue-300'
-                : 'text-slate-400 border-transparent hover:bg-slate-100'
+                ? 'bg-blue-100 text-blue-800 border-blue-300 shadow-xs'
+                : 'text-slate-500 border-slate-200 hover:bg-slate-50'
             }`}
           >
-            透視輔助線
+            📐 透視輔助線
           </button>
 
           {/* 外觀風格快捷鈕 */}

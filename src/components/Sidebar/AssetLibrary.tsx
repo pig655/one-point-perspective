@@ -85,56 +85,56 @@ export const AssetLibrary: React.FC<AssetLibraryProps> = ({
       <div className="flex px-3 pt-3 gap-1 border-b border-slate-100 pb-2">
         <button
           onClick={() => setActiveCategory('all')}
-          className={`flex-1 py-1 text-xs font-medium rounded-md transition-all ${
+          className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
             activeCategory === 'all'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 hover:bg-blue-50'
           }`}
         >
-          全部
+          🌟 全部
         </button>
         <button
           onClick={() => setActiveCategory('geometric')}
-          className={`flex-1 py-1 text-xs font-medium rounded-md transition-all ${
+          className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
             activeCategory === 'geometric'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 hover:bg-blue-50'
           }`}
         >
-          幾何體
+          🔷 幾何
         </button>
         <button
           onClick={() => setActiveCategory('furniture')}
-          className={`flex-1 py-1 text-xs font-medium rounded-md transition-all ${
+          className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
             activeCategory === 'furniture'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 hover:bg-blue-50'
           }`}
         >
-          生活物件
+          🪑 生活
         </button>
         <button
           onClick={() => setActiveCategory('nature')}
-          className={`flex-1 py-1 text-xs font-medium rounded-md transition-all ${
+          className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
             activeCategory === 'nature'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 hover:bg-blue-50'
           }`}
         >
-          角色自然
+          🌳 角色
         </button>
       </div>
 
       {/* 素材列表 */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
+      <div className="flex-1 overflow-y-auto p-3 space-y-2">
         {filteredAssets.map(asset => (
           <div
             key={asset.type}
             onClick={() => onAddObject(asset)}
-            className="group flex items-center p-2.5 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-all duration-150 shadow-sm hover:shadow"
+            className="group flex items-center p-2 rounded-2xl border border-slate-200/90 hover:border-blue-400 hover:bg-blue-50/50 cursor-pointer transition-all duration-150 shadow-xs hover:shadow"
           >
             {/* 圖示預覽框 */}
-            <div className="w-10 h-10 rounded-lg bg-slate-50 group-hover:bg-white border border-slate-100 flex items-center justify-center shrink-0 mr-3 shadow-inner">
+            <div className="w-11 h-11 rounded-xl bg-slate-50 group-hover:bg-white border border-slate-200 flex items-center justify-center shrink-0 mr-2.5 shadow-xs">
               {renderIcon(asset.iconName)}
             </div>
 

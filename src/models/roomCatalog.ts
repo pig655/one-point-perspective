@@ -15,9 +15,80 @@ export interface RoomAssetTemplate {
   iconName: string;
   isWallObject?: boolean;
   defaultWallAnchor?: WallAnchor;
+  imageUrl?: string;
 }
 
 export const ROOM_ASSET_CATALOG: RoomAssetTemplate[] = [
+  // === 童趣故事插畫掛畫 (Nano Banana 繪本藝術) ===
+  {
+    type: 'cat-space-painting',
+    name: '🐱 太空喵喵冒險掛畫',
+    category: 'wall',
+    description: '由 Nano Banana 生成的可愛太空貓咪繪本插畫，掛在牆上超吸睛！',
+    defaultDimensions: { width: 140, height: 95, depth: 5 },
+    defaultColor: '#1e1b4b',
+    secondaryColor: '#f59e0b',
+    iconName: 'Image',
+    isWallObject: true,
+    imageUrl: '/assets/images/painting_cat_astronaut.jpg',
+    defaultWallAnchor: {
+      wall: 'back',
+      u: 0.35,
+      v: 0.45,
+      widthU: 0.32,
+      heightV: 0.35
+    }
+  },
+  {
+    type: 'dino-party-painting',
+    name: '🦖 派對小恐龍掛畫',
+    category: 'wall',
+    description: '由 Nano Banana 生成的可愛恐龍派對繪本插畫，給房間滿滿活力！',
+    defaultDimensions: { width: 90, height: 130, depth: 5 },
+    defaultColor: '#064e3b',
+    secondaryColor: '#fbbf24',
+    iconName: 'Frame',
+    isWallObject: true,
+    imageUrl: '/assets/images/painting_cute_dino.jpg',
+    defaultWallAnchor: {
+      wall: 'right',
+      u: 0.3,
+      v: 0.35,
+      widthU: 0.25,
+      heightV: 0.45
+    }
+  },
+  {
+    type: 'rainbow-window',
+    name: '🌈 彩虹草原景觀窗',
+    category: 'wall',
+    description: '窗外能看到美麗的陽光彩虹與綠油油大草原，好想跳出去玩！',
+    defaultDimensions: { width: 120, height: 120, depth: 8 },
+    defaultColor: '#38bdf8',
+    secondaryColor: '#ffffff',
+    iconName: 'AppWindow',
+    isWallObject: true,
+    imageUrl: '/assets/images/window_rainbow_meadow.jpg',
+    defaultWallAnchor: {
+      wall: 'left',
+      u: 0.35,
+      v: 0.4,
+      widthU: 0.32,
+      heightV: 0.45
+    }
+  },
+  {
+    type: 'bear-rug',
+    name: '🐻 萌萌小熊圓地毯',
+    category: 'furniture',
+    description: '鋪在房間地板上的溫暖小熊地毯，讓房間變得超級溫馨可愛！',
+    defaultDimensions: { width: 130, height: 10, depth: 130 },
+    defaultColor: '#fef3c7',
+    secondaryColor: '#b45309',
+    iconName: 'Shapes',
+    imageUrl: '/assets/images/rug_cute_bear.jpg'
+  },
+
   // === 牆面物件 (掛畫、門窗、時鐘) ===
   {
     type: 'landscape-painting',
@@ -29,6 +100,7 @@ export const ROOM_ASSET_CATALOG: RoomAssetTemplate[] = [
     secondaryColor: '#D97706',
     iconName: 'Image',
     isWallObject: true,
+    imageUrl: '/assets/images/painting_cat_astronaut.jpg',
     defaultWallAnchor: {
       wall: 'back',
       u: 0.35,

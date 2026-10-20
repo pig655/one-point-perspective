@@ -118,6 +118,10 @@ export interface SceneObject {
   /** 地板錨定深度比例 (0: 前緣, 1: 後牆，適用於室內家具) */
   roomFloorZ?: number;
   roomFloorX?: number;
+  /** 自訂圖片或貼圖路徑 (Nano Banana 故事繪本插畫) */
+  imageUrl?: string;
+  /** 外觀趣味主題 (如 gift, dice, cat, pixel 等) */
+  styleVariant?: string;
   /** 渲染層級 (z-index 輔助) */
   order: number;
 }

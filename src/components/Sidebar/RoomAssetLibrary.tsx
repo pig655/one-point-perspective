@@ -71,69 +71,77 @@ export const RoomAssetLibrary: React.FC<RoomAssetLibraryProps> = ({
       <div className="flex px-3 pt-3 gap-1 border-b border-slate-100 pb-2">
         <button
           onClick={() => setActiveCategory('all')}
-          className={`flex-1 py-1 text-xs font-bold rounded-md transition-all ${
+          className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
             activeCategory === 'all'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-100'
+              ? 'bg-amber-500 text-white shadow-xs'
+              : 'text-slate-600 hover:bg-amber-50'
           }`}
         >
-          全部
+          🌟 全部
         </button>
         <button
           onClick={() => setActiveCategory('wall')}
-          className={`flex-1 py-1 text-xs font-bold rounded-md transition-all ${
+          className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
             activeCategory === 'wall'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-100'
+              ? 'bg-amber-500 text-white shadow-xs'
+              : 'text-slate-600 hover:bg-amber-50'
           }`}
         >
-          牆面物件
+          🖼️ 牆面
         </button>
         <button
           onClick={() => setActiveCategory('furniture')}
-          className={`flex-1 py-1 text-xs font-bold rounded-md transition-all ${
+          className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
             activeCategory === 'furniture'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-100'
+              ? 'bg-amber-500 text-white shadow-xs'
+              : 'text-slate-600 hover:bg-amber-50'
           }`}
         >
-          室內家具
+          🛋️ 家具
         </button>
         <button
           onClick={() => setActiveCategory('nature')}
-          className={`flex-1 py-1 text-xs font-bold rounded-md transition-all ${
+          className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
             activeCategory === 'nature'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-100'
+              ? 'bg-amber-500 text-white shadow-xs'
+              : 'text-slate-600 hover:bg-amber-50'
           }`}
         >
-          自然角色
+          🌳 角色
         </button>
       </div>
 
       {/* 素材列表 */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
+      <div className="flex-1 overflow-y-auto p-3 space-y-2">
         {filteredAssets.map(asset => (
           <div
             key={asset.type}
             onClick={() => onAddRoomObject(asset)}
-            className="group flex items-center p-2.5 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 cursor-pointer transition-all duration-150 shadow-xs hover:shadow"
+            className="group flex items-center p-2 rounded-2xl border border-slate-200/90 hover:border-amber-400 hover:bg-amber-50/50 cursor-pointer transition-all duration-150 shadow-xs hover:shadow"
           >
-            <div className="w-10 h-10 rounded-lg bg-slate-50 group-hover:bg-white border border-slate-100 flex items-center justify-center shrink-0 mr-3 shadow-inner">
-              {renderIcon(asset.iconName)}
+            <div className="w-11 h-11 rounded-xl bg-slate-50 group-hover:bg-white border border-slate-200 flex items-center justify-center shrink-0 mr-2.5 overflow-hidden shadow-xs">
+              {asset.imageUrl ? (
+                <img
+                  src={asset.imageUrl}
+                  alt={asset.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                renderIcon(asset.iconName)
+              )}
             </div>
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-slate-800 text-sm group-hover:text-blue-600 transition-colors">
+                <span className="font-bold text-slate-800 text-xs group-hover:text-amber-800 transition-colors truncate">
                   {asset.name}
                 </span>
                 <span
-                  className="w-3 h-3 rounded-full border border-white shrink-0 shadow-xs"
+                  className="w-2.5 h-2.5 rounded-full border border-white shrink-0 shadow-xs ml-1"
                   style={{ backgroundColor: asset.defaultColor }}
                 />
               </div>
-              <p className="text-xs text-slate-400 truncate mt-0.5">
+              <p className="text-[11px] text-slate-500 truncate mt-0.5">
                 {asset.description}
               </p>
             </div>

@@ -206,6 +206,7 @@ export const App: React.FC = () => {
       color: template.defaultColor,
       secondaryColor: template.secondaryColor,
       geometryType: template.type,
+      imageUrl: template.imageUrl,
       order: objects.length + 1,
       showGuidelines: true,
       wallAnchor: template.defaultWallAnchor ? { ...template.defaultWallAnchor } : undefined,
@@ -489,16 +490,16 @@ export const App: React.FC = () => {
           )}
         </main>
 
-        {/* 右側檢視與編輯面板 */}
-        <div className="flex flex-col w-80 bg-white border-l border-slate-200 shadow-sm shrink-0">
-          <div className="p-3 border-b border-slate-100">
+        {/* 右側檢視與編輯面板 (固定高度、獨立滾動、活潑邊框) */}
+        <div className="flex flex-col w-84 bg-white border-l-2 border-amber-200/80 shadow-md shrink-0 h-full overflow-hidden">
+          <div className="p-2.5 border-b border-amber-100 bg-amber-50/60 shrink-0">
             <EducationalTips
               selectedObject={selectedObject}
               camera={camera}
               objectCount={objects.length}
             />
           </div>
-          <div className="flex-1 min-h-0">
+          <div className="flex-1 min-h-0 overflow-y-auto">
             {mainMode === 'room' ? (
               <RoomInspector
                 selectedObject={selectedObject}

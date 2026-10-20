@@ -327,6 +327,14 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
           // [pBL, pBR, pTR, pTL]
           const [pBL, pBR, pTR, pTL] = cornerPts;
 
+          const minX = Math.min(pBL.x, pBR.x, pTR.x, pTL.x);
+          const maxX = Math.max(pBL.x, pBR.x, pTR.x, pTL.x);
+          const minY = Math.min(pBL.y, pBR.y, pTR.y, pTL.y);
+          const maxY = Math.max(pBL.y, pBR.y, pTR.y, pTL.y);
+          const boxW = Math.max(1, maxX - minX);
+          const boxH = Math.max(1, maxY - minY);
+          const clipId = `wall-clip-${obj.id}`;
+
           return (
             <g
               key={obj.id}
@@ -337,6 +345,12 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
                 onSelectObject(obj.id);
               }}
             >
+              <defs>
+                <clipPath id={clipId}>
+                  <polygon points={toPointsString([pBL, pBR, pTR, pTL])} />
+                </clipPath>
+              </defs>
+
               {/* 外框主體多邊形 */}
               <polygon
                 points={toPointsString([pBL, pBR, pTR, pTL])}
@@ -346,10 +360,30 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
                 strokeLinejoin="round"
               />
 
+              {/* 若有自訂插圖 (Nano Banana 故事繪本素材) 進行透視多邊形剪裁渲染 */}
+              {obj.imageUrl && (
+                <g clipPath={`url(#${clipId})`} className="pointer-events-none">
+                  <image
+                    href={obj.imageUrl}
+                    x={minX}
+                    y={minY}
+                    width={boxW}
+                    height={boxH}
+                    preserveAspectRatio={obj.wallAnchor.wall === 'back' ? 'xMidYMid slice' : 'none'}
+                  />
+                </g>
+              )}
+
               {/* 依物件種類渲染生動細節 */}
-              {obj.geometryType === 'room-window' && (
-                // 窗格十字線
+              {obj.geometryType.includes('window') && (
+                // 窗格十字線與窗框
                 <g className="pointer-events-none">
+                  <polygon
+                    points={toPointsString([pBL, pBR, pTR, pTL])}
+                    fill="none"
+                    stroke="#ffffff"
+                    strokeWidth="3.5"
+                  />
                   {/* 水平窗欞 */}
                   <line
                     x1={(pBL.x + pTL.x) / 2}
@@ -357,7 +391,7 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
                     x2={(pBR.x + pTR.x) / 2}
                     y2={(pBR.y + pTR.y) / 2}
                     stroke="#ffffff"
-                    strokeWidth="2.5"
+                    strokeWidth="3"
                   />
                   {/* 垂直窗欞 */}
                   <line
@@ -366,9 +400,20 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
                     x2={(pTL.x + pTR.x) / 2}
                     y2={(pTL.y + pTR.y) / 2}
                     stroke="#ffffff"
-                    strokeWidth="2.5"
+                    strokeWidth="3"
                   />
                 </g>
+              )}
+
+              {/* 掛畫外框木紋或金邊裝飾 */}
+              {(obj.geometryType.includes('painting') || obj.name.includes('畫')) && (
+                <polygon
+                  points={toPointsString([pBL, pBR, pTR, pTL])}
+                  fill="none"
+                  stroke={obj.secondaryColor || '#b45309'}
+                  strokeWidth="3.5"
+                  className="pointer-events-none"
+                />
               )}
 
               {obj.geometryType === 'room-door' && (
@@ -380,10 +425,11 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
                   fill="#fef08a"
                   stroke="#78350f"
                   strokeWidth="1.5"
+                  className="pointer-events-none"
                 />
               )}
 
-              {(obj.geometryType === 'landscape-painting' || obj.geometryType === 'portrait-painting') && (
+              {(!obj.imageUrl && (obj.geometryType === 'landscape-painting' || obj.geometryType === 'portrait-painting')) && (
                 // 內縮畫布內芯與藝術小裝飾
                 <polygon
                   points={toPointsString([
@@ -465,18 +511,55 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
               />
 
               {/* 各面渲染 */}
-              {proj.faces
-                .filter(f => f.isVisible)
-                .map(face => (
-                  <polygon
-                    key={face.id}
-                    points={face.points.map(p => `${p.x},${p.y}`).join(' ')}
-                    fill={getSurfaceFill(face.color, '#ffffff')}
-                    stroke={face.strokeColor}
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                  />
-                ))}
+              {original.imageUrl ? (
+                (() => {
+                  const clipId = `floor-clip-${original.id}`;
+                  const minX = proj.boundingBox.minX;
+                  const minY = proj.boundingBox.minY;
+                  const boxW = proj.boundingBox.width;
+                  const boxH = proj.boundingBox.height;
+                  const topFace = proj.faces.find(f => f.name.includes('頂') || f.id.includes('top')) || proj.faces[0];
+                  const ptsStr = topFace.points.map(p => `${p.x},${p.y}`).join(' ');
+                  return (
+                    <g className="pointer-events-none">
+                      <defs>
+                        <clipPath id={clipId}>
+                          <polygon points={ptsStr} />
+                        </clipPath>
+                      </defs>
+                      <g clipPath={`url(#${clipId})`}>
+                        <image
+                          href={original.imageUrl}
+                          x={minX}
+                          y={minY}
+                          width={boxW}
+                          height={boxH}
+                          preserveAspectRatio="none"
+                        />
+                      </g>
+                      <polygon
+                        points={ptsStr}
+                        fill="none"
+                        stroke={original.secondaryColor || '#b45309'}
+                        strokeWidth="2.5"
+                      />
+                    </g>
+                  );
+                })()
+              ) : (
+                proj.faces
+                  .filter(f => f.isVisible)
+                  .map(face => (
+                    <polygon
+                      key={face.id}
+                      points={face.points.map(p => `${p.x},${p.y}`).join(' ')}
+                      fill={getSurfaceFill(face.color, '#ffffff')}
+                      stroke={face.strokeColor}
+                      strokeWidth="1.5"
+                      strokeLinejoin="round"
+                    />
+                  ))
+              )}
 
               {/* 選取狀態指示外框 */}
               {isSelected && (
