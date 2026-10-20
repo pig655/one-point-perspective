@@ -117,10 +117,10 @@ export const RoomInspector: React.FC<RoomInspectorProps> = ({
               </div>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 {[
-                  { id: 'cat', name: '🐱 太空喵喵', url: '/assets/images/painting_cat_astronaut.jpg' },
-                  { id: 'dino', name: '🦖 派對恐龍', url: '/assets/images/painting_cute_dino.jpg' },
-                  { id: 'meadow', name: '🌈 彩虹草原', url: '/assets/images/window_rainbow_meadow.jpg' },
-                  { id: 'bear', name: '🐻 萌萌小熊', url: '/assets/images/rug_cute_bear.jpg' }
+                  { id: 'cat', name: '🐱 太空喵喵', url: './assets/images/painting_cat_astronaut.jpg' },
+                  { id: 'dino', name: '🦖 派對恐龍', url: './assets/images/painting_cute_dino.jpg' },
+                  { id: 'meadow', name: '🌈 彩虹草原', url: './assets/images/window_rainbow_meadow.jpg' },
+                  { id: 'bear', name: '🐻 萌萌小熊', url: './assets/images/rug_cute_bear.jpg' }
                 ].map(item => (
                   <button
                     key={item.id}

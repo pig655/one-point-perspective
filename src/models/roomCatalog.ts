@@ -30,7 +30,7 @@ export const ROOM_ASSET_CATALOG: RoomAssetTemplate[] = [
     secondaryColor: '#f59e0b',
     iconName: 'Image',
     isWallObject: true,
-    imageUrl: '/assets/images/painting_cat_astronaut.jpg',
+    imageUrl: './assets/images/painting_cat_astronaut.jpg',
     defaultWallAnchor: {
       wall: 'back',
       u: 0.35,
@@ -49,7 +49,7 @@ export const ROOM_ASSET_CATALOG: RoomAssetTemplate[] = [
     secondaryColor: '#fbbf24',
     iconName: 'Frame',
     isWallObject: true,
-    imageUrl: '/assets/images/painting_cute_dino.jpg',
+    imageUrl: './assets/images/painting_cute_dino.jpg',
     defaultWallAnchor: {
       wall: 'right',
       u: 0.3,
@@ -68,7 +68,7 @@ export const ROOM_ASSET_CATALOG: RoomAssetTemplate[] = [
     secondaryColor: '#ffffff',
     iconName: 'AppWindow',
     isWallObject: true,
-    imageUrl: '/assets/images/window_rainbow_meadow.jpg',
+    imageUrl: './assets/images/window_rainbow_meadow.jpg',
     defaultWallAnchor: {
       wall: 'left',
       u: 0.35,
@@ -86,7 +86,7 @@ export const ROOM_ASSET_CATALOG: RoomAssetTemplate[] = [
     defaultColor: '#fef3c7',
     secondaryColor: '#b45309',
     iconName: 'Shapes',
-    imageUrl: '/assets/images/rug_cute_bear.jpg'
+    imageUrl: './assets/images/rug_cute_bear.jpg'
   },
 
   // === 牆面物件 (掛畫、門窗、時鐘) ===
@@ -100,7 +100,7 @@ export const ROOM_ASSET_CATALOG: RoomAssetTemplate[] = [
     secondaryColor: '#D97706',
     iconName: 'Image',
     isWallObject: true,
-    imageUrl: '/assets/images/painting_cat_astronaut.jpg',
+    imageUrl: './assets/images/painting_cat_astronaut.jpg',
     defaultWallAnchor: {
       wall: 'back',
       u: 0.35,

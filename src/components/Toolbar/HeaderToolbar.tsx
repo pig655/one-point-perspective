@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Trophy,
   Undo2,
@@ -11,9 +11,11 @@ import {
   Sparkles,
   Box,
   Home,
-  Trash2
+  Trash2,
+  QrCode
 } from 'lucide-react';
 import { MainMode, RoomSubMode, RenderStyle, ViewSettings, LearningMode } from '../../models/types';
+import { QRCodeModal } from '../Modal/QRCodeModal';
 
 interface HeaderToolbarProps {
   mainMode: MainMode;
@@ -59,6 +61,7 @@ export const HeaderToolbar: React.FC<HeaderToolbarProps> = ({
   onClearScene
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showQrModal, setShowQrModal] = useState<boolean>(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -193,6 +196,16 @@ export const HeaderToolbar: React.FC<HeaderToolbarProps> = ({
           >
             <ImageIcon className="w-3.5 h-3.5" />
             <span>下載圖片</span>
+          </button>
+
+          {/* 📱 學生平板連線 QR Code 按鈕 */}
+          <button
+            onClick={() => setShowQrModal(true)}
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-black rounded-lg shadow-xs transition-all hover:scale-105 active:scale-95"
+            title="開啟學生平板掃描 QR Code 連線視窗"
+          >
+            <QrCode className="w-4 h-4 text-emerald-100" />
+            <span>📱 平板連線</span>
           </button>
 
           <div className="flex items-center space-x-1 pl-1 border-l border-slate-200">
@@ -361,6 +374,9 @@ export const HeaderToolbar: React.FC<HeaderToolbarProps> = ({
           </div>
         </div>
       </div>
+
+      {/* 學生平板連線 QR Code 彈跳視窗 */}
+      <QRCodeModal isOpen={showQrModal} onClose={() => setShowQrModal(false)} />
     </header>
   );
 };
