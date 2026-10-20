@@ -157,7 +157,7 @@ export const ASSET_CATALOG: AssetTemplate[] = [
     name: '透視馬路',
     category: 'furniture',
     description: '由近處地面直通透視點的寬廣道路，帶有中央標線。',
-    defaultDimensions: { width: 220, height: 5, depth: 500 },
+    defaultDimensions: { width: 220, height: 5, depth: 1000 },
     defaultColor: '#64748B', // 瀝青灰
     iconName: 'Milestone',
     geometryType: 'road',

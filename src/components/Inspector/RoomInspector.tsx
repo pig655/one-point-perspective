@@ -359,7 +359,7 @@ export const RoomInspector: React.FC<RoomInspectorProps> = ({
                   </div>
                   <input
                     type="range"
-                    min="30"
+                    min="20"
                     max="250"
                     value={selectedObject.dimensions.height}
                     onChange={e =>
@@ -368,7 +368,28 @@ export const RoomInspector: React.FC<RoomInspectorProps> = ({
                         dimensions: { ...selectedObject.dimensions, height: Number(e.target.value) }
                       })
                     }
-                    className="w-full accent-blue-600"
+                    className="w-full accent-blue-600 cursor-pointer"
+                  />
+                </div>
+
+                <div>
+                  <div className="flex justify-between text-xs text-slate-600 mb-0.5">
+                    <span>長度 / 深度 (D)</span>
+                    <span className="font-semibold">{Math.round(selectedObject.dimensions.depth)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="20"
+                    max="450"
+                    step="5"
+                    value={selectedObject.dimensions.depth}
+                    onChange={e =>
+                      onUpdateObject({
+                        ...selectedObject,
+                        dimensions: { ...selectedObject.dimensions, depth: Number(e.target.value) }
+                      })
+                    }
+                    className="w-full accent-blue-600 cursor-pointer"
                   />
                 </div>
               </div>

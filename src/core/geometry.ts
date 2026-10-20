@@ -649,25 +649,20 @@ export function createTreeGeometry(width: number, height: number, depth: number)
 }
 
 /**
- * 道路幾何模型 (向遠處延伸之雙線道地面)
+ * 道路幾何模型 (向遠處延伸之雙線道地面，支援超長延伸與透視虛線)
  */
 export function createRoadGeometry(width: number, _height: number, depth: number): GeometryModel {
   const hw = width / 2;
-  const d = Math.max(300, depth);
+  const d = Math.max(20, depth);
+  const stripeW = Math.max(2, hw * 0.04);
 
-  const localVertices = [
+  const localVertices: Point3D[] = [
     // 前方路面 (Z=0, Y=0)
     { x: -hw, y: 0, z: 0 },  // 0: 前左路緣
     { x: hw, y: 0, z: 0 },   // 1: 前右路緣
     // 後方路面 (Z=d, Y=0)
     { x: hw, y: 0, z: d },   // 2: 後右路緣
     { x: -hw, y: 0, z: d },  // 3: 後左路緣
-
-    // 中央分隔虛線 4 個頂點 (前、後)
-    { x: -hw * 0.04, y: -0.5, z: 0 },
-    { x: hw * 0.04, y: -0.5, z: 0 },
-    { x: hw * 0.04, y: -0.5, z: d },
-    { x: -hw * 0.04, y: -0.5, z: d },
   ];
 
   const faces = [
@@ -677,20 +672,41 @@ export function createRoadGeometry(width: number, _height: number, depth: number
       vertexIndices: [3, 2, 1, 0],
       shadeFactor: 0.95,
       cullBackface: false
-    },
-    {
-      id: 'road-stripe',
-      name: '中央分道線',
-      vertexIndices: [7, 6, 5, 4],
-      shadeFactor: 1.3,
-      cullBackface: false
     }
   ];
 
   const edges: [number, number][] = [
-    [0, 1], [1, 2], [2, 3], [3, 0],
-    [4, 7], [5, 6]
+    [0, 1], [1, 2], [2, 3], [3, 0]
   ];
+
+  // 動態生成沿深度收斂的中央分道虛線標線 (隨距離自然由疏變密、由寬變窄)
+  const stripeLen = 80;
+  const stripeGap = 60;
+  const step = stripeLen + stripeGap;
+  let segIdx = 0;
+
+  for (let zPos = 15; zPos + 25 < d; zPos += step) {
+    const zStart = zPos;
+    const zEnd = Math.min(d - 5, zPos + stripeLen);
+    const baseV = localVertices.length;
+
+    localVertices.push(
+      { x: -stripeW, y: -0.5, z: zStart }, // baseV: 前左
+      { x: stripeW, y: -0.5, z: zStart },  // baseV + 1: 前右
+      { x: stripeW, y: -0.5, z: zEnd },    // baseV + 2: 後右
+      { x: -stripeW, y: -0.5, z: zEnd }    // baseV + 3: 後左
+    );
+
+    faces.push({
+      id: `road-stripe-${segIdx}`,
+      name: `中央虛線-${segIdx}`,
+      vertexIndices: [baseV + 3, baseV + 2, baseV + 1, baseV],
+      shadeFactor: 1.45,
+      cullBackface: false
+    });
+
+    segIdx++;
+  }
 
   return {
     localVertices,

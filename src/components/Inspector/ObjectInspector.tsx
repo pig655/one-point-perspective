@@ -53,11 +53,12 @@ export const ObjectInspector: React.FC<ObjectInspectorProps> = ({
   const { x, y, z, dimensions, color, isLocked, showGuidelines, name, styleVariant } = selectedObject;
 
   const handleDimensionChange = (key: 'width' | 'height' | 'depth', val: number) => {
+    const maxLimit = key === 'depth' ? 3000 : 800;
     onUpdateObject({
       ...selectedObject,
       dimensions: {
         ...dimensions,
-        [key]: Math.max(10, Math.min(600, val))
+        [key]: Math.max(5, Math.min(maxLimit, val))
       }
     });
   };
@@ -242,17 +243,36 @@ export const ObjectInspector: React.FC<ObjectInspectorProps> = ({
 
           <div>
             <div className="flex justify-between text-xs text-slate-700 font-semibold mb-1">
-              <span>厚度 / 深度 (D)</span>
+              <span>{selectedObject.geometryType === 'road' ? '🛣️ 馬路長度 / 深度 (D)' : '長度 / 深度 (D)'}</span>
               <span className="font-bold text-blue-600 bg-blue-50 px-1.5 rounded">{Math.round(dimensions.depth)}</span>
             </div>
             <input
               type="range"
               min="10"
-              max="500"
+              max={selectedObject.geometryType === 'road' ? 3000 : 2500}
+              step={selectedObject.geometryType === 'road' ? 20 : 10}
               value={dimensions.depth}
               onChange={e => handleDimensionChange('depth', Number(e.target.value))}
               className="w-full accent-blue-600 cursor-pointer"
             />
+            {/* 快速長度深度預設按鈕 */}
+            <div className="flex items-center gap-1 mt-1.5 flex-wrap">
+              <span className="text-[10px] text-slate-400 font-bold mr-0.5">快速設定：</span>
+              {[150, 500, 1000, 2000, 3000].map(preset => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => handleDimensionChange('depth', preset)}
+                  className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold transition-all ${
+                    Math.round(dimensions.depth) === preset
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-slate-100 hover:bg-blue-50 text-slate-600 border border-slate-200'
+                  }`}
+                >
+                  {preset >= 1000 ? `${preset / 1000}k` : preset}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
