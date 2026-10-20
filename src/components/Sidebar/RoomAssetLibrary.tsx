@@ -119,12 +119,15 @@ export const RoomAssetLibrary: React.FC<RoomAssetLibraryProps> = ({
             onClick={() => onAddRoomObject(asset)}
             className="group flex items-center p-2 rounded-2xl border border-slate-200/90 hover:border-amber-400 hover:bg-amber-50/50 cursor-pointer transition-all duration-150 shadow-xs hover:shadow"
           >
-            <div className="w-11 h-11 rounded-xl bg-slate-50 group-hover:bg-white border border-slate-200 flex items-center justify-center shrink-0 mr-2.5 overflow-hidden shadow-xs">
+            <div
+              className="rounded-xl bg-slate-50 group-hover:bg-white border border-slate-200 flex items-center justify-center shrink-0 mr-2.5 overflow-hidden shadow-xs"
+              style={{ width: '40px', height: '40px', minWidth: '40px', maxWidth: '40px', minHeight: '40px', maxHeight: '40px' }}
+            >
               {asset.imageUrl ? (
                 <img
                   src={asset.imageUrl}
                   alt={asset.name}
-                  className="w-full h-full object-cover"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                 />
               ) : (
                 renderIcon(asset.iconName)

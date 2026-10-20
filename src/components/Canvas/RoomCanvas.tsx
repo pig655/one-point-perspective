@@ -15,6 +15,7 @@ import {
 } from '../../core/roomGeometry';
 import { VanishingPoint } from './VanishingPoint';
 import { HorizonLine } from './HorizonLine';
+import { RoomFurnitureRenderer } from './RoomFurnitureRenderer';
 
 interface RoomCanvasProps {
   camera: PerspectiveCamera;
@@ -547,18 +548,12 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
                   );
                 })()
               ) : (
-                proj.faces
-                  .filter(f => f.isVisible)
-                  .map(face => (
-                    <polygon
-                      key={face.id}
-                      points={face.points.map(p => `${p.x},${p.y}`).join(' ')}
-                      fill={getSurfaceFill(face.color, '#ffffff')}
-                      stroke={face.strokeColor}
-                      strokeWidth="1.5"
-                      strokeLinejoin="round"
-                    />
-                  ))
+                <RoomFurnitureRenderer
+                  original={original}
+                  proj={proj}
+                  camera={camera}
+                  getSurfaceFill={getSurfaceFill}
+                />
               )}
 
               {/* 選取狀態指示外框 */}
