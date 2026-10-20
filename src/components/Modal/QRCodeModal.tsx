@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import {
-  QrCode,
   Copy,
   Check,
   ExternalLink,
@@ -21,15 +20,24 @@ interface QRCodeModalProps {
 export const QRCodeModal: React.FC<QRCodeModalProps> = ({ isOpen, onClose }) => {
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
-  const [selectedMode, setSelectedMode] = useState<'current' | 'lan' | 'custom'>('current');
+  const [selectedMode, setSelectedMode] = useState<'online' | 'lan' | 'current' | 'custom'>('online');
   const [customUrl, setCustomUrl] = useState<string>('');
   
+  // GitHub Pages 正式線上網址
+  const githubPagesUrl = 'https://pig655.github.io/one-point-perspective/';
   // 教室 Wi-Fi 預設 IP (根據本機網路卡偵測)
   const lanUrl = 'http://192.168.1.8:5173/';
   
   // 計算當前欲產生的目標網址
   const currentUrl = typeof window !== 'undefined' ? window.location.href : 'http://localhost:5173/';
-  const activeUrl = selectedMode === 'current' ? currentUrl : selectedMode === 'lan' ? lanUrl : (customUrl.trim() || currentUrl);
+  const activeUrl =
+    selectedMode === 'online'
+      ? githubPagesUrl
+      : selectedMode === 'lan'
+      ? lanUrl
+      : selectedMode === 'custom'
+      ? (customUrl.trim() || githubPagesUrl)
+      : currentUrl;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -141,18 +149,18 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({ isOpen, onClose }) => 
         {/* 內容區 */}
         <div className="p-6 flex flex-col items-center bg-gradient-to-b from-amber-50/40 via-white to-amber-50/20 space-y-4">
           
-          {/* 連線模式選擇 (當前網址 / 教室同Wi-Fi / 自訂網址) */}
+          {/* 連線模式選擇 (GitHub 線上版 / 教室同Wi-Fi / 當前網址) */}
           <div className="w-full flex p-1 bg-slate-100 rounded-2xl border border-slate-200 text-xs font-black">
             <button
-              onClick={() => setSelectedMode('current')}
+              onClick={() => setSelectedMode('online')}
               className={`flex-1 py-1.5 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
-                selectedMode === 'current'
-                  ? 'bg-white text-amber-700 shadow-xs'
+                selectedMode === 'online'
+                  ? 'bg-white text-emerald-700 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Globe className="w-3.5 h-3.5 text-amber-500" />
-              <span>當前網址</span>
+              <Globe className="w-3.5 h-3.5 text-emerald-500" />
+              <span>🌐 GitHub 線上版</span>
             </button>
             <button
               onClick={() => setSelectedMode('lan')}
@@ -163,18 +171,18 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({ isOpen, onClose }) => 
               }`}
             >
               <Wifi className="w-3.5 h-3.5 text-indigo-500" />
-              <span>教室 Wi-Fi 區網</span>
+              <span>📶 教室 Wi-Fi 區網</span>
             </button>
             <button
-              onClick={() => setSelectedMode('custom')}
+              onClick={() => setSelectedMode('current')}
               className={`flex-1 py-1.5 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
-                selectedMode === 'custom'
-                  ? 'bg-white text-emerald-700 shadow-xs'
+                selectedMode === 'current'
+                  ? 'bg-white text-amber-700 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <QrCode className="w-3.5 h-3.5 text-emerald-500" />
-              <span>自訂線上網址</span>
+              <Smartphone className="w-3.5 h-3.5 text-amber-500" />
+              <span>💻 目前本機</span>
             </button>
           </div>
 
