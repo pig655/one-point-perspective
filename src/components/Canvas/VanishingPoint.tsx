@@ -83,8 +83,8 @@ export const VanishingPoint: React.FC<VanishingPointProps> = ({
       aria-valuemin={50}
       aria-valuemax={canvasWidth - 50}
     >
-      {/* 拖曳感應加大熱區 (Touch-friendly 44x44px) */}
-      <circle r="26" fill="transparent" />
+      {/* 拖曳感應加大熱區 (iPad 觸控友善 68px 大圓) */}
+      <circle r="34" fill="transparent" />
 
       {/* 外圈光暈與脈動動效 */}
       <circle

@@ -40,12 +40,17 @@ import { RoomInspector } from './components/Inspector/RoomInspector';
 import { EducationalTips } from './components/Inspector/EducationalTips';
 import { CustomObjectModal } from './components/Sidebar/CustomObjectModal';
 import { MissionPanel } from './components/MissionDock/MissionPanel';
+import { PackagePlus, Sliders, X } from 'lucide-react';
 
 export const App: React.FC = () => {
   // 主模式：'room' (室內空間透視) 或 'basic' (基礎透視練習)
   const [mainMode, setMainMode] = useState<MainMode>('room');
   const [roomSubMode, setRoomSubMode] = useState<RoomSubMode>('furnish');
   const [learningMode, setLearningMode] = useState<LearningMode>('explore');
+
+  // 平板/iPad 畫布極大化：側邊欄收折狀態 (預設關閉以最大化畫布，點選物件或按鈕自動喚出)
+  const [isLeftOpen, setIsLeftOpen] = useState<boolean>(false);
+  const [isRightOpen, setIsRightOpen] = useState<boolean>(false);
 
   // 相機與視圖
   const [camera, setCamera] = useState<PerspectiveCamera>(DEFAULT_CAMERA);
@@ -216,6 +221,8 @@ export const App: React.FC = () => {
 
     setObjects(prev => [...prev, newObj]);
     setSelectedObjectId(newId);
+    setIsLeftOpen(false);
+    setIsRightOpen(true);
     showToast(`已將「${template.name}」加入房間！`);
   }, [objects.length, pushHistorySnapshot, showToast]);
 
@@ -239,8 +246,18 @@ export const App: React.FC = () => {
 
     setObjects(prev => [...prev, newObj]);
     setSelectedObjectId(newId);
+    setIsLeftOpen(false);
+    setIsRightOpen(true);
     showToast(`已加入「${template.name}」到畫布中！`);
   }, [objects.length, pushHistorySnapshot, showToast]);
+
+  // 平板優化：點選物件時自動開啟右側屬性，方便立即調整尺寸與顏色
+  const handleSelectObject = useCallback((id: string | null) => {
+    setSelectedObjectId(id);
+    if (id) {
+      setIsRightOpen(true);
+    }
+  }, []);
 
   // 刪除物件
   const handleDeleteObject = useCallback((id: string) => {
@@ -426,7 +443,7 @@ export const App: React.FC = () => {
         </div>
       )}
 
-      {/* 頂部全域工具列 */}
+      {/* 頂部全域工具列 (精簡單層平板設計) */}
       <HeaderToolbar
         mainMode={mainMode}
         roomSubMode={roomSubMode}
@@ -447,22 +464,83 @@ export const App: React.FC = () => {
         onExportPng={handleExportPng}
         onResetDefaultScene={handleResetDefaultScene}
         onClearScene={handleClearScene}
+        isLeftOpen={isLeftOpen}
+        onToggleLeft={() => setIsLeftOpen(prev => !prev)}
+        isRightOpen={isRightOpen}
+        onToggleRight={() => setIsRightOpen(prev => !prev)}
       />
 
-      {/* 主工作區：三欄配置 (左素材、中央畫布、右面板) */}
-      <div className="flex flex-1 min-h-0 overflow-hidden">
-        {/* 左側素材庫 */}
-        {mainMode === 'room' ? (
-          <RoomAssetLibrary onAddRoomObject={handleAddRoomObject} />
-        ) : (
-          <AssetLibrary
-            onAddObject={handleAddBasicObject}
-            onOpenCustomModal={() => setIsCustomModalOpen(true)}
-          />
+      {/* 主工作區：畫布最大化容器 (iPad 平板全寬度設計) */}
+      <div className="flex-1 relative min-h-0 w-full overflow-hidden flex bg-slate-200/80">
+        
+        {/* 左側抽屜：素材庫 (Drawer Overlay，不壓扁畫布) */}
+        {isLeftOpen && (
+          <div className="absolute top-0 left-0 bottom-0 z-30 w-72 sm:w-80 bg-white/95 backdrop-blur-md shadow-2xl border-r-2 border-amber-300 flex flex-col drawer-left h-full">
+            <div className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-400 to-orange-400 text-white font-black text-xs shadow-xs">
+              <span className="flex items-center gap-1.5 text-sm">
+                <PackagePlus className="w-4 h-4" />
+                <span>🎒 物件素材庫</span>
+              </span>
+              <button
+                onClick={() => setIsLeftOpen(false)}
+                className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white"
+                title="關閉素材庫"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              {mainMode === 'room' ? (
+                <RoomAssetLibrary onAddRoomObject={handleAddRoomObject} />
+              ) : (
+                <AssetLibrary
+                  onAddObject={handleAddBasicObject}
+                  onOpenCustomModal={() => setIsCustomModalOpen(true)}
+                />
+              )}
+            </div>
+          </div>
         )}
 
-        {/* 中央互動透視畫布 */}
-        <main className="flex-1 flex flex-col min-w-0 bg-slate-200/60 p-3 relative">
+        {/* 中央互動透視大畫布 (佔據 100% 空間) */}
+        <main className="w-full h-full flex-1 flex flex-col min-w-0 p-1 sm:p-2 relative bg-slate-100 overflow-hidden">
+          
+          {/* 畫布左上浮動按鈕：🎒 + 加入物件 */}
+          <button
+            onClick={() => setIsLeftOpen(prev => !prev)}
+            className={`absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3.5 py-2 rounded-2xl shadow-lg border-2 text-xs font-black transition-all active:scale-95 ${
+              isLeftOpen
+                ? 'bg-slate-800 text-white border-slate-700'
+                : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-white'
+            }`}
+            title="開啟物件素材庫"
+          >
+            <PackagePlus className="w-4 h-4" />
+            <span>{isLeftOpen ? '✕ 關閉素材' : '🎒 + 加入物件'}</span>
+          </button>
+
+          {/* 畫布右上浮動按鈕：🎨 調整物件 */}
+          <button
+            onClick={() => setIsRightOpen(prev => !prev)}
+            className={`absolute top-3 right-3 z-20 flex items-center gap-1.5 px-3.5 py-2 rounded-2xl shadow-lg border-2 text-xs font-black transition-all active:scale-95 ${
+              isRightOpen
+                ? 'bg-slate-800 text-white border-slate-700'
+                : selectedObject
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-white shadow-blue-200'
+                : 'bg-white/95 text-slate-700 border-slate-200 hover:bg-white'
+            }`}
+            title="開啟/收合物件屬性面板"
+          >
+            <Sliders className="w-4 h-4" />
+            <span>{isRightOpen ? '✕ 關閉屬性' : selectedObject ? `🎨 調整：${selectedObject.name}` : '🎨 物件屬性'}</span>
+          </button>
+
+          {/* 畫布底部小幫手提示條 (平板防呆引導) */}
+          <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-10 pointer-events-none hidden sm:flex items-center gap-1.5 bg-white/90 backdrop-blur-md px-3.5 py-1 rounded-full border border-amber-200/90 shadow-md text-[11px] font-bold text-amber-950">
+            <span>💡 秘訣：用手指滑動黃色「透視點 (VP)」，或點選畫布上的物件改變尺寸！</span>
+          </div>
+
+          {/* 核心 SVG 畫布渲染 */}
           {mainMode === 'room' ? (
             <RoomCanvas
               camera={camera}
@@ -471,7 +549,7 @@ export const App: React.FC = () => {
               objects={roomSubMode === 'empty' ? [] : objects}
               selectedObjectId={selectedObjectId}
               viewSettings={viewSettings}
-              onSelectObject={setSelectedObjectId}
+              onSelectObject={handleSelectObject}
               onUpdateObject={handleUpdateObject}
               onUpdateVpX={handleUpdateVpX}
               svgRef={svgRef}
@@ -482,7 +560,7 @@ export const App: React.FC = () => {
               objects={objects}
               selectedObjectId={selectedObjectId}
               viewSettings={viewSettings}
-              onSelectObject={setSelectedObjectId}
+              onSelectObject={handleSelectObject}
               onUpdateObjectPosition={handleUpdateObjectPosition}
               onUpdateVpX={handleUpdateVpX}
               svgRef={svgRef}
@@ -490,38 +568,53 @@ export const App: React.FC = () => {
           )}
         </main>
 
-        {/* 右側檢視與編輯面板 (固定高度、獨立滾動、活潑邊框) */}
-        <div className="flex flex-col w-84 bg-white border-l-2 border-amber-200/80 shadow-md shrink-0 h-full overflow-hidden">
-          <div className="p-2.5 border-b border-amber-100 bg-amber-50/60 shrink-0">
-            <EducationalTips
-              selectedObject={selectedObject}
-              camera={camera}
-              objectCount={objects.length}
-            />
-          </div>
-          <div className="flex-1 min-h-0 overflow-y-auto">
-            {mainMode === 'room' ? (
-              <RoomInspector
+        {/* 右側抽屜：物件屬性與顏色調整 (Drawer Overlay，不壓扁畫布) */}
+        {isRightOpen && (
+          <div className="absolute top-0 right-0 bottom-0 z-30 w-80 sm:w-88 bg-white/95 backdrop-blur-md shadow-2xl border-l-2 border-blue-300 flex flex-col drawer-right h-full">
+            <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xs shadow-xs">
+              <span className="flex items-center gap-1.5 text-sm">
+                <Sliders className="w-4 h-4" />
+                <span>🎨 物件屬性與微調</span>
+              </span>
+              <button
+                onClick={() => setIsRightOpen(false)}
+                className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white"
+                title="關閉屬性面板"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-2 border-b border-amber-100 bg-amber-50/70 shrink-0">
+              <EducationalTips
                 selectedObject={selectedObject}
-                roomColors={roomColors}
-                renderStyle={viewSettings.renderStyle}
-                onUpdateObject={handleUpdateObject}
-                onDeleteObject={handleDeleteObject}
-                onDuplicateObject={handleDuplicateObject}
-                onUpdateRoomColors={setRoomColors}
-                onUpdateRenderStyle={handleUpdateRenderStyle}
+                camera={camera}
+                objectCount={objects.length}
               />
-            ) : (
-              <ObjectInspector
-                selectedObject={selectedObject}
-                onUpdateObject={handleUpdateObject}
-                onDeleteObject={handleDeleteObject}
-                onDuplicateObject={handleDuplicateObject}
-                onReorderObject={() => {}}
-              />
-            )}
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              {mainMode === 'room' ? (
+                <RoomInspector
+                  selectedObject={selectedObject}
+                  roomColors={roomColors}
+                  renderStyle={viewSettings.renderStyle}
+                  onUpdateObject={handleUpdateObject}
+                  onDeleteObject={handleDeleteObject}
+                  onDuplicateObject={handleDuplicateObject}
+                  onUpdateRoomColors={setRoomColors}
+                  onUpdateRenderStyle={handleUpdateRenderStyle}
+                />
+              ) : (
+                <ObjectInspector
+                  selectedObject={selectedObject}
+                  onUpdateObject={handleUpdateObject}
+                  onDeleteObject={handleDeleteObject}
+                  onDuplicateObject={handleDuplicateObject}
+                  onReorderObject={() => {}}
+                />
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* 底部教學任務挑戰 Dock */}

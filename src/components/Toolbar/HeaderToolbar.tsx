@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   Trophy,
   Undo2,
@@ -8,11 +8,16 @@ import {
   Upload,
   Image as ImageIcon,
   RotateCcw,
-  Sparkles,
   Box,
   Home,
   Trash2,
-  QrCode
+  QrCode,
+  Eye,
+  EyeOff,
+  Settings,
+  X,
+  PackagePlus,
+  Sliders
 } from 'lucide-react';
 import { MainMode, RoomSubMode, RenderStyle, ViewSettings, LearningMode } from '../../models/types';
 import { QRCodeModal } from '../Modal/QRCodeModal';
@@ -37,6 +42,11 @@ interface HeaderToolbarProps {
   onExportPng: () => void;
   onResetDefaultScene: () => void;
   onClearScene: () => void;
+  // 側邊欄開關 (iPad 畫布極大化支援)
+  isLeftOpen?: boolean;
+  onToggleLeft?: () => void;
+  isRightOpen?: boolean;
+  onToggleRight?: () => void;
 }
 
 export const HeaderToolbar: React.FC<HeaderToolbarProps> = ({
@@ -58,10 +68,16 @@ export const HeaderToolbar: React.FC<HeaderToolbarProps> = ({
   onImportJson,
   onExportPng,
   onResetDefaultScene,
-  onClearScene
+  onClearScene,
+  isLeftOpen = true,
+  onToggleLeft,
+  isRightOpen = true,
+  onToggleRight
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showQrModal, setShowQrModal] = useState<boolean>(false);
+  const [showMoreMenu, setShowMoreMenu] = useState<boolean>(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -71,8 +87,30 @@ export const HeaderToolbar: React.FC<HeaderToolbarProps> = ({
     }
   };
 
+  // 點擊選單外部自動關閉更多選單
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMoreMenu(false);
+      }
+    };
+    if (showMoreMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showMoreMenu]);
+
+  // 一鍵切換所有透視輔助線 (iPad 簡潔化)
+  const isAnyGuidelineOn = viewSettings.showPerspectiveLines || viewSettings.showHorizonLine;
+  const handleToggleAllGuidelines = () => {
+    const targetState = !isAnyGuidelineOn;
+    if (viewSettings.showPerspectiveLines !== targetState) onToggleViewSetting('showPerspectiveLines');
+    if (viewSettings.showHorizonLine !== targetState) onToggleViewSetting('showHorizonLine');
+    if (viewSettings.showFloorLines !== targetState) onToggleViewSetting('showFloorLines');
+  };
+
   return (
-    <header className="bg-white border-b border-slate-200 px-4 py-2 flex flex-col gap-2 select-none shadow-xs">
+    <header className="bg-white border-b-2 border-amber-200/90 px-3 py-1.5 flex items-center justify-between select-none shadow-xs z-30 shrink-0 min-h-[54px]">
       {/* 隱藏的檔案上傳輸入框 */}
       <input
         ref={fileInputRef}
@@ -82,296 +120,313 @@ export const HeaderToolbar: React.FC<HeaderToolbarProps> = ({
         onChange={handleFileChange}
       />
 
-      {/* 第一層：品牌主標、雙主模式切換、教學任務與作品操作 */}
-      <div className="flex items-center justify-between">
-        {/* 左區：Logo 與雙主模式切換 */}
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-amber-400 via-pink-500 to-indigo-500 flex items-center justify-center text-white shadow-sm text-lg">
-              🎨
-            </div>
-            <div>
-              <h1 className="font-black text-slate-800 text-sm leading-tight flex items-center gap-1">
-                <span>單點透視魔法教室</span>
-                <span className="text-amber-500 text-xs">✨</span>
-              </h1>
-              <p className="text-[10px] font-bold text-amber-700/80">國小五年級視覺藝術與空間科學</p>
-            </div>
-          </div>
+      {/* 左區：Logo 與雙主模式切換 (iPad 大膠囊) */}
+      <div className="flex items-center space-x-2">
+        {/* 左側素材庫開關 (iPad 快速喚出) */}
+        {onToggleLeft && (
+          <button
+            onClick={onToggleLeft}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-bold text-xs border transition-all ${
+              isLeftOpen
+                ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-xs'
+                : 'bg-slate-100 hover:bg-amber-50 text-slate-700 border-slate-200'
+            }`}
+            title="開啟/收合素材庫"
+          >
+            <PackagePlus className="w-4 h-4 text-amber-600" />
+            <span className="hidden sm:inline">素材庫</span>
+          </button>
+        )}
 
-          {/* 模式一 (基礎透視) 與 模式二 (室內空間) 切換大按鈕 */}
-          <div className="flex p-1 bg-amber-100/60 rounded-2xl border border-amber-200 shadow-xs">
-            <button
-              onClick={() => onToggleMainMode('basic')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
-                mainMode === 'basic'
-                  ? 'bg-blue-600 text-white shadow-xs scale-102'
-                  : 'text-slate-600 hover:text-blue-700 hover:bg-white/60'
-              }`}
-            >
-              <Box className="w-4 h-4" />
-              <span>🧭 基礎透視探索</span>
-            </button>
-            <button
-              onClick={() => onToggleMainMode('room')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
-                mainMode === 'room'
-                  ? 'bg-indigo-600 text-white shadow-xs scale-102'
-                  : 'text-slate-600 hover:text-indigo-700 hover:bg-white/60'
-              }`}
-            >
-              <Home className="w-4 h-4" />
-              <span>🏠 室內透視魔法屋</span>
-            </button>
+        <div className="flex items-center space-x-1.5 mr-1">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 via-orange-400 to-indigo-500 flex items-center justify-center text-white shadow-xs text-base">
+            🎨
           </div>
-
-          {/* 自由探索 vs 闖關任務 */}
-          <div className="flex p-0.5 bg-amber-50 rounded-xl border border-amber-200">
-            <button
-              onClick={() => onToggleLearningMode(learningMode === 'explore' ? 'mission' : 'explore')}
-              className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-black transition-all ${
-                learningMode === 'mission'
-                  ? 'bg-amber-500 text-white shadow-xs'
-                  : 'text-amber-900 hover:bg-amber-100'
-              }`}
-            >
-              <Trophy className="w-3.5 h-3.5 text-yellow-300" />
-              <span>{learningMode === 'mission' ? '⭐ 任務闖關中' : '🏆 挑戰教學任務'}</span>
-            </button>
-          </div>
+          <span className="font-black text-slate-800 text-sm tracking-tight hidden md:inline">
+            單點透視教室
+          </span>
         </div>
 
-        {/* 右區：復原、儲存、匯出、圖片 */}
-        <div className="flex items-center space-x-1.5">
-          <div className="flex items-center space-x-1 pr-2 border-r border-slate-200">
-            <button
-              onClick={onUndo}
-              disabled={!canUndo}
-              className="p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-colors"
-              title="復原 (Ctrl+Z)"
-            >
-              <Undo2 className="w-4 h-4" />
-            </button>
-            <button
-              onClick={onRedo}
-              disabled={!canRedo}
-              className="p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-colors"
-              title="重做 (Ctrl+Y)"
-            >
-              <Redo2 className="w-4 h-4" />
-            </button>
-          </div>
-
+        {/* 模式一 (基礎透視) 與 模式二 (室內空間) 切換大按鈕 */}
+        <div className="flex p-0.5 bg-slate-100 rounded-2xl border border-slate-200">
           <button
-            onClick={onSaveLocal}
-            className="flex items-center space-x-1 px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors border border-slate-200"
-            title="儲存進度至瀏覽器"
+            onClick={() => onToggleMainMode('basic')}
+            className={`flex items-center space-x-1 px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+              mainMode === 'basic'
+                ? 'bg-blue-600 text-white shadow-xs scale-102'
+                : 'text-slate-600 hover:text-blue-700'
+            }`}
           >
-            <Save className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">暫存</span>
+            <Box className="w-4 h-4" />
+            <span>🧭 基礎練習</span>
           </button>
-
           <button
-            onClick={onExportJson}
-            className="flex items-center space-x-1 px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors border border-slate-200"
-            title="匯出場景檔案 (.json)"
+            onClick={() => onToggleMainMode('room')}
+            className={`flex items-center space-x-1 px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+              mainMode === 'room'
+                ? 'bg-indigo-600 text-white shadow-xs scale-102'
+                : 'text-slate-600 hover:text-indigo-700'
+            }`}
           >
-            <Download className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">匯出</span>
+            <Home className="w-4 h-4" />
+            <span>🏠 室內房間</span>
           </button>
-
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="flex items-center space-x-1 px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors border border-slate-200"
-            title="匯入作品檔案 (.json)"
-          >
-            <Upload className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">匯入</span>
-          </button>
-
-          <button
-            onClick={onExportPng}
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow-xs transition-colors"
-            title="下載高畫質 PNG 作品圖片"
-          >
-            <ImageIcon className="w-3.5 h-3.5" />
-            <span>下載圖片</span>
-          </button>
-
-          {/* 📱 學生平板連線 QR Code 按鈕 */}
-          <button
-            onClick={() => setShowQrModal(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-black rounded-lg shadow-xs transition-all hover:scale-105 active:scale-95"
-            title="開啟學生平板掃描 QR Code 連線視窗"
-          >
-            <QrCode className="w-4 h-4 text-emerald-100" />
-            <span>📱 平板連線</span>
-          </button>
-
-          <div className="flex items-center space-x-1 pl-1 border-l border-slate-200">
-            <button
-              onClick={onResetDefaultScene}
-              className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors"
-              title="重設為預設場景"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </button>
-            <button
-              onClick={onClearScene}
-              className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
-              title="清空所有物件"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
         </div>
       </div>
 
-      {/* 第二層：子階段選單 (空房間 / 房間佈置 / 完成作品) 與 視圖輔助開關 */}
-      <div className="flex items-center justify-between pt-1 border-t border-slate-100 text-xs">
-        {/* 左區：室內模式子階段 */}
+      {/* 中區：室內學習步驟 (空房間 ➔ 佈置 ➔ 塗色) 或 挑戰任務 */}
+      <div className="flex items-center space-x-1">
         {mainMode === 'room' ? (
-          <div className="flex items-center space-x-2">
-            <span className="text-[11px] font-bold text-slate-500">學習階段：</span>
-            <div className="flex p-0.5 bg-slate-100 rounded-lg">
-              <button
-                onClick={() => onToggleRoomSubMode('empty')}
-                className={`px-3 py-1 rounded-md font-bold transition-all ${
-                  roomSubMode === 'empty'
-                    ? 'bg-white text-indigo-600 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                1. 空房間 (認識結構)
-              </button>
-              <button
-                onClick={() => onToggleRoomSubMode('furnish')}
-                className={`px-3 py-1 rounded-md font-bold transition-all ${
-                  roomSubMode === 'furnish'
-                    ? 'bg-white text-indigo-600 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                2. 房間佈置 (家具門窗)
-              </button>
-              <button
-                onClick={() => onToggleRoomSubMode('color')}
-                className={`px-3 py-1 rounded-md font-bold transition-all ${
-                  roomSubMode === 'color'
-                    ? 'bg-white text-emerald-600 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                3. 完成作品 (著色匯出)
-              </button>
-            </div>
+          <div className="flex p-0.5 bg-amber-50 rounded-2xl border border-amber-200">
+            <button
+              onClick={() => onToggleRoomSubMode('empty')}
+              className={`px-2.5 py-1 rounded-xl text-xs font-black transition-all ${
+                roomSubMode === 'empty'
+                  ? 'bg-white text-indigo-700 shadow-xs scale-102'
+                  : 'text-slate-600 hover:text-indigo-900'
+              }`}
+            >
+              🚪 1. 空房間
+            </button>
+            <button
+              onClick={() => onToggleRoomSubMode('furnish')}
+              className={`px-2.5 py-1 rounded-xl text-xs font-black transition-all ${
+                roomSubMode === 'furnish'
+                  ? 'bg-white text-indigo-700 shadow-xs scale-102'
+                  : 'text-slate-600 hover:text-indigo-900'
+              }`}
+            >
+              🛋️ 2. 佈置家具
+            </button>
+            <button
+              onClick={() => onToggleRoomSubMode('color')}
+              className={`px-2.5 py-1 rounded-xl text-xs font-black transition-all ${
+                roomSubMode === 'color'
+                  ? 'bg-white text-emerald-700 shadow-xs scale-102'
+                  : 'text-slate-600 hover:text-emerald-900'
+              }`}
+            >
+              🎨 3. 完成塗色
+            </button>
           </div>
         ) : (
-          <div className="flex items-center space-x-2 text-slate-500">
-            <span className="font-bold text-blue-600 flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>基礎透視練習模式</span>
-            </span>
-            <span>— 自由移動方塊與透視點，體驗近大遠小！</span>
-          </div>
+          <button
+            onClick={() => onToggleLearningMode(learningMode === 'explore' ? 'mission' : 'explore')}
+            className={`flex items-center space-x-1 px-3 py-1.5 rounded-2xl text-xs font-black border transition-all ${
+              learningMode === 'mission'
+                ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
+                : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-200'
+            }`}
+          >
+            <Trophy className="w-3.5 h-3.5 text-yellow-400" />
+            <span>{learningMode === 'mission' ? '⭐ 闖關任務進行中' : '🏆 挑戰教學關卡'}</span>
+          </button>
+        )}
+      </div>
+
+      {/* 右區：復原重做、一鍵輔助線、存圖、QR 碼、更多選單 */}
+      <div className="flex items-center space-x-1.5">
+        {/* 復原 / 重做 (大按鈕、拇指友善) */}
+        <div className="flex items-center bg-slate-100 rounded-xl p-0.5 border border-slate-200">
+          <button
+            onClick={onUndo}
+            disabled={!canUndo}
+            className="p-1.5 rounded-lg text-slate-700 hover:bg-white disabled:opacity-25 disabled:pointer-events-none transition-colors"
+            title="復原上一步"
+          >
+            <Undo2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={onRedo}
+            disabled={!canRedo}
+            className="p-1.5 rounded-lg text-slate-700 hover:bg-white disabled:opacity-25 disabled:pointer-events-none transition-colors"
+            title="重做下一步"
+          >
+            <Redo2 className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* 👁️ 一鍵透視輔助線開關 */}
+        <button
+          onClick={handleToggleAllGuidelines}
+          className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-black border transition-all ${
+            isAnyGuidelineOn
+              ? 'bg-amber-400 text-slate-900 border-amber-500 shadow-xs'
+              : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
+          }`}
+          title="顯示或隱藏透視射線"
+        >
+          {isAnyGuidelineOn ? <Eye className="w-4 h-4 text-slate-900" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
+          <span className="hidden sm:inline">輔助線</span>
+        </button>
+
+        {/* 📸 存圖片大按鈕 */}
+        <button
+          onClick={onExportPng}
+          className="flex items-center space-x-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-black rounded-xl shadow-xs transition-all"
+          title="下載作品圖片 (PNG)"
+        >
+          <ImageIcon className="w-3.5 h-3.5" />
+          <span>存作品</span>
+        </button>
+
+        {/* 📱 平板連線 QR Code 按鈕 */}
+        <button
+          onClick={() => setShowQrModal(true)}
+          className="flex items-center space-x-1 px-2.5 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 active:scale-95 text-white text-xs font-black rounded-xl shadow-xs transition-all"
+          title="平板掃描 QR Code 進入教室"
+        >
+          <QrCode className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">QR 碼</span>
+        </button>
+
+        {/* 右側屬性面板開關 (iPad 快速喚出) */}
+        {onToggleRight && (
+          <button
+            onClick={onToggleRight}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-bold text-xs border transition-all ${
+              isRightOpen
+                ? 'bg-blue-100 text-blue-900 border-blue-300 shadow-xs'
+                : 'bg-slate-100 hover:bg-blue-50 text-slate-700 border-slate-200'
+            }`}
+            title="開啟/收合物件屬性面板"
+          >
+            <Sliders className="w-4 h-4 text-blue-600" />
+            <span className="hidden sm:inline">屬性</span>
+          </button>
         )}
 
-        {/* 右區：圖層開關與風格切換 */}
-        <div className="flex items-center space-x-2">
-          {/* 室內空間模式專用：地板線、天花板線 */}
-          {mainMode === 'room' ? (
-            <>
-              <button
-                onClick={() => onToggleViewSetting('showFloorLines')}
-                className={`px-2.5 py-1 rounded-md font-semibold border transition-colors ${
-                  viewSettings.showFloorLines
-                    ? 'bg-amber-50 text-amber-700 border-amber-300'
-                    : 'text-slate-400 border-transparent hover:bg-slate-100'
-                }`}
-                title="顯示/隱藏地板透視線"
-              >
-                地板線
-              </button>
-              <button
-                onClick={() => onToggleViewSetting('showCeilingLines')}
-                className={`px-2.5 py-1 rounded-md font-semibold border transition-colors ${
-                  viewSettings.showCeilingLines
-                    ? 'bg-sky-50 text-sky-700 border-sky-300'
-                    : 'text-slate-400 border-transparent hover:bg-slate-100'
-                }`}
-                title="顯示/隱藏天花板透視線"
-              >
-                天花板線
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={() => onToggleViewSetting('showGroundGrid')}
-              className={`px-2.5 py-1 rounded-md font-semibold border transition-colors ${
-                viewSettings.showGroundGrid
-                  ? 'bg-indigo-50 text-indigo-700 border-indigo-300'
-                  : 'text-slate-400 border-transparent hover:bg-slate-100'
-              }`}
-            >
-              地面格線
-            </button>
+        {/* ⚙️ 更多選單 (次要進階功能收納) */}
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setShowMoreMenu(prev => !prev)}
+            className={`p-1.5 rounded-xl border transition-colors ${
+              showMoreMenu
+                ? 'bg-slate-200 text-slate-900 border-slate-400 shadow-inner'
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
+            }`}
+            title="更多工具與設定"
+          >
+            <Settings className="w-4 h-4" />
+          </button>
+
+          {/* 更多功能彈出卡片 */}
+          {showMoreMenu && (
+            <div className="absolute right-0 top-11 w-64 bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-3 z-50 space-y-2.5 animate-scale-up">
+              <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 text-xs font-black text-slate-700">
+                <span>⚙️ 教室工具與設定</span>
+                <button
+                  onClick={() => setShowMoreMenu(false)}
+                  className="p-1 rounded-md text-slate-400 hover:text-slate-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* 畫面風格切換 */}
+              <div>
+                <span className="text-[11px] font-bold text-slate-500 block mb-1">作品呈現風格：</span>
+                <div className="grid grid-cols-2 gap-1.5 text-xs">
+                  <button
+                    onClick={() => { onUpdateRenderStyle('colored'); setShowMoreMenu(false); }}
+                    className={`py-1.5 px-2 rounded-xl font-bold border transition-all text-center ${
+                      viewSettings.renderStyle === 'colored'
+                        ? 'bg-emerald-500 text-white border-emerald-600 shadow-xs'
+                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    🎨 彩色作品
+                  </button>
+                  <button
+                    onClick={() => { onUpdateRenderStyle('wireframe'); setShowMoreMenu(false); }}
+                    className={`py-1.5 px-2 rounded-xl font-bold border transition-all text-center ${
+                      viewSettings.renderStyle === 'wireframe'
+                        ? 'bg-slate-800 text-white border-slate-900 shadow-xs'
+                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    ✏️ 黑白線稿
+                  </button>
+                </div>
+              </div>
+
+              {/* 輔助線細項切換 */}
+              <div className="pt-1.5 border-t border-slate-100 space-y-1">
+                <span className="text-[11px] font-bold text-slate-500 block">輔助線細項：</span>
+                <label className="flex items-center justify-between text-xs text-slate-700 cursor-pointer p-1 rounded hover:bg-slate-50">
+                  <span>視平線 (Horizon)</span>
+                  <input
+                    type="checkbox"
+                    checked={viewSettings.showHorizonLine}
+                    onChange={() => onToggleViewSetting('showHorizonLine')}
+                    className="accent-amber-500"
+                  />
+                </label>
+                <label className="flex items-center justify-between text-xs text-slate-700 cursor-pointer p-1 rounded hover:bg-slate-50">
+                  <span>透視點 (VP)</span>
+                  <input
+                    type="checkbox"
+                    checked={viewSettings.showVanishingPoint}
+                    onChange={() => onToggleViewSetting('showVanishingPoint')}
+                    className="accent-amber-500"
+                  />
+                </label>
+                <label className="flex items-center justify-between text-xs text-slate-700 cursor-pointer p-1 rounded hover:bg-slate-50">
+                  <span>深度透視射線</span>
+                  <input
+                    type="checkbox"
+                    checked={viewSettings.showPerspectiveLines}
+                    onChange={() => onToggleViewSetting('showPerspectiveLines')}
+                    className="accent-amber-500"
+                  />
+                </label>
+              </div>
+
+              {/* 檔案存檔與讀取 */}
+              <div className="pt-1.5 border-t border-slate-100 space-y-1">
+                <span className="text-[11px] font-bold text-slate-500 block">作品保存：</span>
+                <button
+                  onClick={() => { onSaveLocal(); setShowMoreMenu(false); }}
+                  className="w-full text-left flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  <Save className="w-4 h-4 text-blue-500" />
+                  <span>暫存進度至瀏覽器</span>
+                </button>
+                <button
+                  onClick={() => { onExportJson(); setShowMoreMenu(false); }}
+                  className="w-full text-left flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  <Download className="w-4 h-4 text-indigo-500" />
+                  <span>匯出場景專案檔 (.json)</span>
+                </button>
+                <button
+                  onClick={() => { fileInputRef.current?.click(); setShowMoreMenu(false); }}
+                  className="w-full text-left flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  <Upload className="w-4 h-4 text-emerald-500" />
+                  <span>匯入場景專案檔 (.json)</span>
+                </button>
+              </div>
+
+              {/* 重設與清空 */}
+              <div className="pt-1.5 border-t border-slate-100 flex items-center gap-1.5">
+                <button
+                  onClick={() => { onResetDefaultScene(); setShowMoreMenu(false); }}
+                  className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>重設場景</span>
+                </button>
+                <button
+                  onClick={() => { onClearScene(); setShowMoreMenu(false); }}
+                  className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-xl text-xs font-semibold bg-red-50 hover:bg-red-100 text-red-600 border border-red-200"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>清空畫布</span>
+                </button>
+              </div>
+            </div>
           )}
-
-          {/* 通用開關：視平線、透視點、透視輔助線 */}
-          <button
-            onClick={() => onToggleViewSetting('showHorizonLine')}
-            className={`px-2.5 py-1 rounded-xl text-xs font-bold border transition-all ${
-              viewSettings.showHorizonLine
-                ? 'bg-red-50 text-red-600 border-red-300 shadow-xs'
-                : 'text-slate-500 border-slate-200 hover:bg-slate-50'
-            }`}
-          >
-            📏 視平線
-          </button>
-
-          <button
-            onClick={() => onToggleViewSetting('showVanishingPoint')}
-            className={`px-2.5 py-1 rounded-xl text-xs font-bold border transition-all ${
-              viewSettings.showVanishingPoint
-                ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-xs'
-                : 'text-slate-500 border-slate-200 hover:bg-slate-50'
-            }`}
-          >
-            🎯 透視點 (VP)
-          </button>
-
-          <button
-            onClick={() => onToggleViewSetting('showPerspectiveLines')}
-            className={`px-2.5 py-1 rounded-xl text-xs font-bold border transition-all ${
-              viewSettings.showPerspectiveLines
-                ? 'bg-blue-100 text-blue-800 border-blue-300 shadow-xs'
-                : 'text-slate-500 border-slate-200 hover:bg-slate-50'
-            }`}
-          >
-            📐 透視輔助線
-          </button>
-
-          {/* 外觀風格快捷鈕 */}
-          <div className="flex p-0.5 bg-slate-100 rounded-md border border-slate-200">
-            <button
-              onClick={() => onUpdateRenderStyle('wireframe')}
-              className={`px-2 py-0.5 rounded text-[11px] font-bold ${
-                viewSettings.renderStyle === 'wireframe' ? 'bg-white text-slate-800 shadow-xs' : 'text-slate-500'
-              }`}
-              title="黑白線稿風格"
-            >
-              線稿
-            </button>
-            <button
-              onClick={() => onUpdateRenderStyle('colored')}
-              className={`px-2 py-0.5 rounded text-[11px] font-bold ${
-                viewSettings.renderStyle === 'colored' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-500'
-              }`}
-              title="彩色作品風格"
-            >
-              彩色
-            </button>
-          </div>
         </div>
       </div>
 

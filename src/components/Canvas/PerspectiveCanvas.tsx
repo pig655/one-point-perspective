@@ -68,7 +68,7 @@ export const PerspectiveCanvas: React.FC<PerspectiveCanvasProps> = ({
       <svg
         ref={svgRef}
         viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
-        className="w-full h-full max-h-[82vh] shadow-lg rounded-xl border border-slate-300 bg-white"
+        className="w-full h-full max-h-full shadow-lg rounded-2xl border-2 border-slate-300 bg-white"
         onClick={handleCanvasClick}
         style={{ touchAction: 'none' }}
       >
