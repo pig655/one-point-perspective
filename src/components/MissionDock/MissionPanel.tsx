@@ -10,7 +10,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { SceneState } from '../../models/types';
-import { TEACHING_MISSIONS } from '../../models/missions';
+import { ROOM_MISSIONS, BASIC_MISSIONS } from '../../models/missions';
 
 interface MissionPanelProps {
   currentMissionId: string;
@@ -25,7 +25,13 @@ export const MissionPanel: React.FC<MissionPanelProps> = ({
   onSelectMission,
   onExitMissionMode
 }) => {
-  const currentMission = TEACHING_MISSIONS.find(m => m.id === currentMissionId) || TEACHING_MISSIONS[0];
+  // 依據目前主模式 (room 或 basic) 選取對應的任務清單
+  const missionList = sceneState.mainMode === 'room' ? ROOM_MISSIONS : BASIC_MISSIONS;
+
+  // 取得目前選取的任務 (若不在目前清單中，預設選取第一個)
+  const currentMission =
+    missionList.find(m => m.id === currentMissionId) || missionList[0];
+
   const [hasCelebrated, setHasCelebrated] = useState(false);
 
   // 動態驗證任務步驟
@@ -52,9 +58,9 @@ export const MissionPanel: React.FC<MissionPanelProps> = ({
     }
   }, [isMissionAllCompleted, hasCelebrated]);
 
-  const currentIndex = TEACHING_MISSIONS.findIndex(m => m.id === currentMission.id);
-  const prevMission = currentIndex > 0 ? TEACHING_MISSIONS[currentIndex - 1] : null;
-  const nextMission = currentIndex < TEACHING_MISSIONS.length - 1 ? TEACHING_MISSIONS[currentIndex + 1] : null;
+  const currentIndex = missionList.findIndex(m => m.id === currentMission.id);
+  const prevMission = currentIndex > 0 ? missionList[currentIndex - 1] : null;
+  const nextMission = currentIndex < missionList.length - 1 ? missionList[currentIndex + 1] : null;
 
   return (
     <div className="bg-white border-t border-slate-200 px-6 py-3 shadow-lg select-none">
@@ -64,7 +70,7 @@ export const MissionPanel: React.FC<MissionPanelProps> = ({
           <div className="flex items-center space-x-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl">
             <Trophy className="w-5 h-5 text-amber-500" />
             <span className="font-extrabold text-amber-900 text-sm">
-              第 {currentMission.number} 關 / 共 {TEACHING_MISSIONS.length} 關
+              第 {currentMission.number} 關 / 共 {missionList.length} 關
             </span>
           </div>
 

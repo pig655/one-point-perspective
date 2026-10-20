@@ -33,7 +33,33 @@ export interface PerspectiveCamera {
   canvasHeight: number;
 }
 
-export type ObjectCategory = 'geometric' | 'furniture' | 'nature' | 'custom';
+export type MainMode = 'basic' | 'room';
+export type RoomSubMode = 'empty' | 'furnish' | 'color';
+export type RenderStyle = 'wireframe' | 'guidelines' | 'clean' | 'colored';
+
+export interface RoomColors {
+  leftWall: string;
+  rightWall: string;
+  backWall: string;
+  ceiling: string;
+  floor: string;
+}
+
+export type WallTarget = 'left' | 'right' | 'back';
+
+export interface WallAnchor {
+  wall: WallTarget;
+  /** 深度方向比例 u (0: 外框前緣, 1: 後牆) 或後牆水平比例 u (0: 左, 1: 右) */
+  u: number;
+  /** 垂直方向比例 v (0: 地板, 1: 天花板) */
+  v: number;
+  /** 牆面寬度比例 */
+  widthU: number;
+  /** 牆面高度比例 */
+  heightV: number;
+}
+
+export type ObjectCategory = 'geometric' | 'furniture' | 'nature' | 'wall' | 'custom';
 
 export interface ObjectDimensions {
   width: number;
@@ -76,7 +102,8 @@ export interface SceneObject {
   dimensions: ObjectDimensions;
   /** 物件主色調 (HEX) */
   color: string;
-  /** 邊框顏色 (HEX) */
+  /** 次要/邊框顏色 (HEX) */
+  secondaryColor?: string;
   strokeColor?: string;
   /** 物件預設幾何模型識別代碼 */
   geometryType: string;
@@ -86,8 +113,11 @@ export interface SceneObject {
   isLocked?: boolean;
   /** 是否顯示個別物件的透視輔助線 */
   showGuidelines?: boolean;
-  /** 旋轉角度 (繞 Y 軸，步進角度或 0-360) */
-  rotationY?: number;
+  /** 牆面錨定設定 (若為牆面物件：掛畫、門窗、時鐘) */
+  wallAnchor?: WallAnchor;
+  /** 地板錨定深度比例 (0: 前緣, 1: 後牆，適用於室內家具) */
+  roomFloorZ?: number;
+  roomFloorX?: number;
   /** 渲染層級 (z-index 輔助) */
   order: number;
 }
@@ -127,12 +157,50 @@ export interface ProjectedObject {
   isSelected: boolean;
 }
 
+export interface RoomFrame {
+  /** 房間前外框座標 (固定於畫布) */
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+  /** 後牆深度比率 t (0 ~ 1) */
+  depthRatio: number;
+}
+
+export interface RoomCorners {
+  // 前外框四角
+  ftl: Point2D;
+  ftr: Point2D;
+  fbr: Point2D;
+  fbl: Point2D;
+  // 後牆四角
+  btl: Point2D;
+  btr: Point2D;
+  bbr: Point2D;
+  bbl: Point2D;
+}
+
+export interface RoomProjectedSurfaces {
+  corners: RoomCorners;
+  leftWall: Point2D[];
+  rightWall: Point2D[];
+  backWall: Point2D[];
+  ceiling: Point2D[];
+  floor: Point2D[];
+  floorLines: { start: Point2D; end: Point2D }[];
+  ceilingLines: { start: Point2D; end: Point2D }[];
+  depthRays: { start: Point2D; end: Point2D }[];
+}
+
 export interface ViewSettings {
   showHorizonLine: boolean;
   showVanishingPoint: boolean;
   showPerspectiveLines: boolean;
   showGroundGrid: boolean;
-  showDepthMarkers: boolean;
+  showFloorLines: boolean;
+  showCeilingLines: boolean;
+  showWallLines: boolean;
+  renderStyle: RenderStyle;
   gridSpacing: number;
   gridDepthLines: number;
 }
@@ -152,6 +220,7 @@ export interface MissionStep {
 export interface Mission {
   id: string;
   number: number;
+  mode: MainMode;
   title: string;
   description: string;
   conceptToLearn: string;
@@ -160,14 +229,28 @@ export interface Mission {
 }
 
 export interface SceneState {
+  mainMode: MainMode;
+  roomSubMode: RoomSubMode;
   camera: PerspectiveCamera;
+  roomFrame: RoomFrame;
+  roomColors: RoomColors;
   objects: SceneObject[];
   selectedObjectId: string | null;
   viewSettings: ViewSettings;
   mode: LearningMode;
   currentMissionId: string | null;
   history: {
-    past: { camera: PerspectiveCamera; objects: SceneObject[] }[];
-    future: { camera: PerspectiveCamera; objects: SceneObject[] }[];
+    past: {
+      camera: PerspectiveCamera;
+      objects: SceneObject[];
+      roomColors: RoomColors;
+      mainMode: MainMode;
+    }[];
+    future: {
+      camera: PerspectiveCamera;
+      objects: SceneObject[];
+      roomColors: RoomColors;
+      mainMode: MainMode;
+    }[];
   };
 }

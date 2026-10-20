@@ -1,8 +1,9 @@
 /**
- * 預設範例場景資料
+ * 預設範例場景資料 (基礎練習與室內空間)
  */
 
 import { SceneObject, PerspectiveCamera, ViewSettings } from './types';
+import { DEFAULT_ROOM_FRAME, DEFAULT_ROOM_COLORS } from '../core/roomGeometry';
 
 export const DEFAULT_CAMERA: PerspectiveCamera = {
   vpX: 500,
@@ -17,102 +18,137 @@ export const DEFAULT_VIEW_SETTINGS: ViewSettings = {
   showVanishingPoint: true,
   showPerspectiveLines: true,
   showGroundGrid: true,
-  showDepthMarkers: true,
+  showFloorLines: true,
+  showCeilingLines: true,
+  showWallLines: true,
+  renderStyle: 'colored',
   gridSpacing: 50,
   gridDepthLines: 8
 };
 
 /**
- * 預設單點透視教室範例場景
+ * 預設室內空間物件 (已佈置好掛畫、窗戶與家具的精緻房間)
  */
-export const DEFAULT_CLASSROOM_OBJECTS: SceneObject[] = [
-  // 左側教室窗戶
+export const DEFAULT_ROOM_OBJECTS: SceneObject[] = [
+  // 後牆橫向風景掛畫
   {
-    id: 'obj-window-1',
-    name: '教室景觀窗',
-    category: 'furniture',
+    id: 'room-art-back',
+    name: '後牆風景掛畫',
+    category: 'wall',
+    x: 500,
+    y: 260,
+    z: 750,
+    dimensions: { width: 140, height: 85, depth: 5 },
+    color: '#0284c7',
+    secondaryColor: '#fef08a',
+    geometryType: 'landscape-painting',
+    order: 1,
+    wallAnchor: {
+      wall: 'back',
+      u: 0.35,
+      v: 0.45,
+      widthU: 0.3,
+      heightV: 0.32
+    }
+  },
+  // 左牆景觀窗戶
+  {
+    id: 'room-window-left',
+    name: '左側景觀窗',
+    category: 'wall',
     x: 200,
     y: 280,
-    z: 220,
-    dimensions: { width: 90, height: 110, depth: 15 },
-    color: '#38BDF8',
-    geometryType: 'window',
-    order: 1,
-    showGuidelines: false
-  },
-  // 左側置物櫃
-  {
-    id: 'obj-cabinet-1',
-    name: '置物收納櫃',
-    category: 'furniture',
-    x: 230,
-    y: 490,
-    z: 160,
-    dimensions: { width: 110, height: 130, depth: 60 },
-    color: '#0284C7',
-    geometryType: 'cabinet',
+    z: 400,
+    dimensions: { width: 110, height: 110, depth: 8 },
+    color: '#60a5fa',
+    secondaryColor: '#ffffff',
+    geometryType: 'room-window',
     order: 2,
-    showGuidelines: false
+    wallAnchor: {
+      wall: 'left',
+      u: 0.35,
+      v: 0.38,
+      widthU: 0.32,
+      heightV: 0.46
+    }
   },
-  // 中央示範教學方塊
+  // 地板書桌
   {
-    id: 'obj-demo-cube',
-    name: '探索透視方塊',
-    category: 'geometric',
-    x: 500,
-    y: 460,
-    z: 120,
-    dimensions: { width: 85, height: 85, depth: 85 },
-    color: '#3B82F6',
-    geometryType: 'cube',
+    id: 'room-desk-main',
+    name: '原木書桌',
+    category: 'furniture',
+    x: 680,
+    y: 480,
+    z: 450,
+    dimensions: { width: 140, height: 85, depth: 90 },
+    color: '#d97706',
+    geometryType: 'room-desk',
     order: 3,
-    showGuidelines: true // 預設展示輔助線
+    roomFloorX: 0.68,
+    roomFloorZ: 0.45
   },
-  // 右前方學生課桌
+  // 地板靠背椅
   {
-    id: 'obj-desk-1',
-    name: '前排課桌',
+    id: 'room-chair-main',
+    name: '舒適休閒椅',
     category: 'furniture',
-    x: 750,
-    y: 530,
-    z: 50,
-    dimensions: { width: 115, height: 80, depth: 85 },
-    color: '#D97706',
-    geometryType: 'desk',
+    x: 680,
+    y: 520,
+    z: 220,
+    dimensions: { width: 60, height: 90, depth: 60 },
+    color: '#92400e',
+    geometryType: 'room-chair',
     order: 4,
-    showGuidelines: false
+    roomFloorX: 0.68,
+    roomFloorZ: 0.22
   },
-  // 課桌椅搭配
+  // 地板綠意盆栽
   {
-    id: 'obj-chair-1',
-    name: '前排學生椅',
-    category: 'furniture',
-    x: 750,
-    y: 540,
-    z: 0,
+    id: 'room-plant-corner',
+    name: '窗邊綠意盆栽',
+    category: 'nature',
+    x: 250,
+    y: 520,
+    z: 280,
     dimensions: { width: 55, height: 85, depth: 55 },
-    color: '#B45309',
-    geometryType: 'chair',
+    color: '#16a34a',
+    geometryType: 'room-potted-plant',
     order: 5,
-    showGuidelines: false
+    roomFloorX: 0.24,
+    roomFloorZ: 0.28
   }
 ];
 
 /**
- * 簡易空白初始場景
+ * 基礎透視練習預設物件
  */
-export const STARTER_CUBE_OBJECTS: SceneObject[] = [
+export const DEFAULT_BASIC_OBJECTS: SceneObject[] = [
   {
-    id: 'starter-cube',
-    name: '單點透視正方體',
+    id: 'basic-demo-cube',
+    name: '近處透視正方體',
     category: 'geometric',
-    x: 500,
+    x: 400,
     y: 480,
-    z: 100,
-    dimensions: { width: 100, height: 100, depth: 100 },
-    color: '#3B82F6',
+    z: 80,
+    dimensions: { width: 90, height: 90, depth: 90 },
+    color: '#3b82f6',
     geometryType: 'cube',
     order: 1,
     showGuidelines: true
+  },
+  {
+    id: 'basic-far-cube',
+    name: '遠處透視正方體',
+    category: 'geometric',
+    x: 650,
+    y: 440,
+    z: 320,
+    dimensions: { width: 90, height: 90, depth: 90 },
+    color: '#10b981',
+    geometryType: 'cube',
+    order: 2,
+    showGuidelines: true
   }
 ];
+
+export { DEFAULT_ROOM_FRAME, DEFAULT_ROOM_COLORS };
