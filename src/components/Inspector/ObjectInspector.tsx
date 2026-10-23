@@ -11,8 +11,7 @@ import {
   Maximize2,
   Palette,
   ArrowUp,
-  ArrowDown,
-  Sparkles
+  ArrowDown
 } from 'lucide-react';
 
 interface ObjectInspectorProps {
@@ -50,7 +49,7 @@ export const ObjectInspector: React.FC<ObjectInspectorProps> = ({
     );
   }
 
-  const { x, y, z, dimensions, color, isLocked, showGuidelines, name, styleVariant } = selectedObject;
+  const { x, y, z, dimensions, color, isLocked, showGuidelines, name } = selectedObject;
 
   const handleDimensionChange = (key: 'width' | 'height' | 'depth', val: number) => {
     const maxLimit = key === 'depth' ? 3000 : 800;
@@ -76,7 +75,13 @@ export const ObjectInspector: React.FC<ObjectInspectorProps> = ({
             title="點擊修改名稱"
           />
           <span className="text-[11px] font-semibold text-amber-700 px-2 block">
-            🏷️ 類別：{selectedObject.category === 'geometric' ? '幾何立體' : selectedObject.category === 'furniture' ? '生活家具' : '自然角色'}
+            🏷️ 類別：{
+              selectedObject.category === 'geometric' ? '幾何立體' :
+              selectedObject.category === 'vehicle' ? '街頭車輛' :
+              selectedObject.category === 'building' ? '街景建築' :
+              selectedObject.category === 'animal' ? '動物與角色' :
+              selectedObject.category === 'furniture' ? '生活設施' : '其他物件'
+            }
           </span>
         </div>
 
@@ -110,39 +115,6 @@ export const ObjectInspector: React.FC<ObjectInspectorProps> = ({
         </div>
       </div>
 
-      {/* 外觀趣味主題選擇 (讓方塊與物件不單調) */}
-      <div className="bg-purple-50/60 p-3 rounded-2xl border border-purple-200 shadow-xs">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-extrabold text-purple-900 flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-purple-600" />
-            <span>外觀趣味造型</span>
-          </span>
-          <span className="text-[10px] text-purple-600 font-semibold bg-purple-100 px-2 py-0.5 rounded-full">
-            童趣裝飾
-          </span>
-        </div>
-        <div className="grid grid-cols-3 gap-1.5 text-xs">
-          {[
-            { id: 'default', label: '🎨 經典純色' },
-            { id: 'gift', label: '🎁 禮物盒' },
-            { id: 'dice', label: '🎲 幸運骰子' },
-            { id: 'cat', label: '🐱 開心小喵' },
-            { id: 'pixel', label: '🧱 冒險積木' }
-          ].map(theme => (
-            <button
-              key={theme.id}
-              onClick={() => onUpdateObject({ ...selectedObject, styleVariant: theme.id })}
-              className={`py-1.5 px-1 text-center font-bold rounded-xl border text-[11px] transition-all ${
-                (styleVariant || 'default') === theme.id
-                  ? 'bg-purple-600 text-white border-purple-700 shadow-xs scale-102'
-                  : 'bg-white text-slate-700 border-purple-100 hover:bg-purple-100/50'
-              }`}
-            >
-              {theme.label}
-            </button>
-          ))}
-        </div>
-      </div>
 
       {/* 操作一：深度 Z (近大遠小之核心) */}
       <div className="bg-gradient-to-br from-amber-50 to-orange-50/70 p-3.5 rounded-2xl border-2 border-amber-200 shadow-xs">

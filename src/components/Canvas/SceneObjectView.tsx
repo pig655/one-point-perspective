@@ -116,7 +116,7 @@ export const SceneObjectView: React.FC<SceneObjectViewProps> = ({
         );
       })}
 
-      {/* 趣味外觀造型與立體裝飾細節 (非單純幾何圖形) */}
+      {/* 建築與家具結構表面細節 */}
       {(() => {
         const frontFace = faces.find(f => f.name.includes('前') || f.id.includes('front'));
         if (!frontFace || frontFace.points.length < 4 || !frontFace.isVisible) return null;
@@ -132,90 +132,7 @@ export const SceneObjectView: React.FC<SceneObjectViewProps> = ({
 
         if (fw < 15 || fh < 15) return null;
 
-        const variant = original.styleVariant || 'default';
-
-        // 1. 禮物盒造型 (金色十字緞帶 + 蝴蝶結)
-        if (variant === 'gift') {
-          return (
-            <g className="pointer-events-none">
-              {/* 垂直緞帶 */}
-              <line
-                x1={midX}
-                y1={pTL.y}
-                x2={midX}
-                y2={pBL.y}
-                stroke="#fbbf24"
-                strokeWidth={Math.max(3, fw * 0.12)}
-              />
-              {/* 水平緞帶 */}
-              <line
-                x1={pTL.x}
-                y1={midY}
-                x2={pTR.x}
-                y2={midY}
-                stroke="#fbbf24"
-                strokeWidth={Math.max(3, fh * 0.12)}
-              />
-              {/* 中心緞帶結 */}
-              <circle cx={midX} cy={midY} r={Math.max(4, fw * 0.08)} fill="#f59e0b" />
-            </g>
-          );
-        }
-
-        // 2. 開心小貓造型 (可愛五官 + 腮紅)
-        if (variant === 'cat') {
-          const eyeDist = fw * 0.22;
-          const eyeR = Math.max(2, fw * 0.05);
-          return (
-            <g className="pointer-events-none">
-              {/* 雙眼 */}
-              <circle cx={midX - eyeDist} cy={midY - fh * 0.08} r={eyeR} fill="#1e293b" />
-              <circle cx={midX + eyeDist} cy={midY - fh * 0.08} r={eyeR} fill="#1e293b" />
-              <circle cx={midX - eyeDist + 1} cy={midY - fh * 0.08 - 1} r={eyeR * 0.4} fill="#ffffff" />
-              <circle cx={midX + eyeDist + 1} cy={midY - fh * 0.08 - 1} r={eyeR * 0.4} fill="#ffffff" />
-              {/* 貓咪鼻子與微笑嘴巴 */}
-              <path
-                d={`M ${midX - 4} ${midY + 2} Q ${midX} ${midY + 5} ${midX + 4} ${midY + 2}`}
-                fill="none"
-                stroke="#1e293b"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-              {/* 粉紅腮紅 */}
-              <ellipse cx={midX - eyeDist - 3} cy={midY + 4} rx={eyeR * 1.2} ry={eyeR * 0.7} fill="#f43f5e" fillOpacity="0.45" />
-              <ellipse cx={midX + eyeDist + 3} cy={midY + 4} rx={eyeR * 1.2} ry={eyeR * 0.7} fill="#f43f5e" fillOpacity="0.45" />
-            </g>
-          );
-        }
-
-        // 3. 骰子造型 (點數)
-        if (variant === 'dice') {
-          const dotR = Math.max(2.5, fw * 0.055);
-          const offset = fw * 0.22;
-          return (
-            <g className="pointer-events-none" fill="#ffffff">
-              <circle cx={midX} cy={midY} r={dotR} />
-              <circle cx={midX - offset} cy={midY - offset} r={dotR} />
-              <circle cx={midX + offset} cy={midY + offset} r={dotR} />
-              <circle cx={midX + offset} cy={midY - offset} r={dotR} />
-              <circle cx={midX - offset} cy={midY + offset} r={dotR} />
-            </g>
-          );
-        }
-
-        // 4. 像素積木造型 (Minecraft 風格方格紋理)
-        if (variant === 'pixel') {
-          return (
-            <g className="pointer-events-none" stroke="rgba(255,255,255,0.4)" strokeWidth="1">
-              <line x1={pTL.x + fw * 0.33} y1={pTL.y} x2={pTL.x + fw * 0.33} y2={pBL.y} />
-              <line x1={pTL.x + fw * 0.66} y1={pTL.y} x2={pTL.x + fw * 0.66} y2={pBL.y} />
-              <line x1={pTL.x} y1={pTL.y + fh * 0.33} x2={pTR.x} y2={pTL.y + fh * 0.33} />
-              <line x1={pTL.x} y1={pTL.y + fh * 0.66} x2={pTR.x} y2={pTL.y + fh * 0.66} />
-            </g>
-          );
-        }
-
-        // 5. 課桌細節：抽屜與圓把手
+        // 1. 課桌細節：抽屜與圓把手
         if (original.geometryType === 'desk') {
           return (
             <g className="pointer-events-none">

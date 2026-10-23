@@ -12,7 +12,17 @@ import {
   createWindowGeometry,
   createTreeGeometry,
   createRoadGeometry,
-  createPersonGeometry
+  createPersonGeometry,
+  createCarGeometry,
+  createBusGeometry,
+  createTruckGeometry,
+  createStreetlightGeometry,
+  createSkyscraperGeometry,
+  createStoreGeometry,
+  createBenchGeometry,
+  createHydrantGeometry,
+  createDogGeometry,
+  createCatGeometry
 } from '../core/geometry';
 
 export {
@@ -20,7 +30,17 @@ export {
   createWindowGeometry,
   createTreeGeometry,
   createRoadGeometry,
-  createPersonGeometry
+  createPersonGeometry,
+  createCarGeometry,
+  createBusGeometry,
+  createTruckGeometry,
+  createStreetlightGeometry,
+  createSkyscraperGeometry,
+  createStoreGeometry,
+  createBenchGeometry,
+  createHydrantGeometry,
+  createDogGeometry,
+  createCatGeometry
 };
 
 export interface AssetTemplate {
@@ -186,5 +206,123 @@ export const ASSET_CATALOG: AssetTemplate[] = [
     iconName: 'Trees',
     geometryType: 'tree',
     createGeometry: (dim) => createTreeGeometry(dim.width, dim.height, dim.depth)
+  },
+
+  // === 車輛載具類 ===
+  {
+    type: 'car',
+    name: '經典轎車',
+    category: 'vehicle',
+    description: '流線型四門房車，包含前擋風玻璃、車頂、行李箱、大燈與水箱護罩。',
+    defaultDimensions: { width: 120, height: 75, depth: 220 },
+    defaultColor: '#2563EB', // 經典藍
+    iconName: 'Car',
+    geometryType: 'car',
+    createGeometry: (dim) => createCarGeometry(dim.width, dim.height, dim.depth)
+  },
+  {
+    type: 'bus',
+    name: '城市公車',
+    category: 'vehicle',
+    description: '大型大眾運輸客運巴士，具有超大前擋風玻璃、路線 LED 看板與車頂空調。',
+    defaultDimensions: { width: 140, height: 130, depth: 360 },
+    defaultColor: '#059669', // 翡翠公車綠
+    iconName: 'Bus',
+    geometryType: 'bus',
+    createGeometry: (dim) => createBusGeometry(dim.width, dim.height, dim.depth)
+  },
+  {
+    type: 'truck',
+    name: '貨運卡車',
+    category: 'vehicle',
+    description: '重型物流運輸卡車，前方為獨立駕駛車頭，後方為厚實的大型長方體貨櫃箱。',
+    defaultDimensions: { width: 130, height: 120, depth: 280 },
+    defaultColor: '#DC2626', // 烈焰紅
+    iconName: 'Truck',
+    geometryType: 'truck',
+    createGeometry: (dim) => createTruckGeometry(dim.width, dim.height, dim.depth)
+  },
+
+  // === 街景建築類 ===
+  {
+    type: 'skyscraper',
+    name: '摩天商辦大樓',
+    category: 'building',
+    description: '現代都會高樓大廈，採三段式逐層收束階梯設計，頂端有避雷尖塔。',
+    defaultDimensions: { width: 180, height: 320, depth: 160 },
+    defaultColor: '#0284C7', // 科技青藍
+    iconName: 'Building2',
+    geometryType: 'skyscraper',
+    createGeometry: (dim) => createSkyscraperGeometry(dim.width, dim.height, dim.depth)
+  },
+  {
+    type: 'store',
+    name: '街角商店',
+    category: 'building',
+    description: '歐風街角文創小店，附向前懸挑的條紋遮陽雨棚、落地透明櫥窗與大看板。',
+    defaultDimensions: { width: 170, height: 160, depth: 150 },
+    defaultColor: '#D97706', // 溫暖磚橘
+    iconName: 'Store',
+    geometryType: 'store',
+    createGeometry: (dim) => createStoreGeometry(dim.width, dim.height, dim.depth)
+  },
+
+  // === 街頭生活設施類 ===
+  {
+    type: 'streetlight',
+    name: '城市路燈',
+    category: 'furniture',
+    description: '馬路旁的金屬照明路燈，具有穩固基座、立柱、延伸懸臂與明亮的發光燈罩。',
+    defaultDimensions: { width: 60, height: 210, depth: 60 },
+    defaultColor: '#475569', // 沉穩鋼灰
+    iconName: 'Lamp',
+    geometryType: 'streetlight',
+    createGeometry: (dim) => createStreetlightGeometry(dim.width, dim.height, dim.depth)
+  },
+  {
+    type: 'bench',
+    name: '公園長椅',
+    category: 'furniture',
+    description: '人行道與綠地休閒木長椅，包含實木條椅面、後傾靠背與兩側鍛鐵扶手。',
+    defaultDimensions: { width: 120, height: 65, depth: 55 },
+    defaultColor: '#92400E', // 實木胡桃棕
+    iconName: 'Armchair',
+    geometryType: 'bench',
+    createGeometry: (dim) => createBenchGeometry(dim.width, dim.height, dim.depth)
+  },
+  {
+    type: 'hydrant',
+    name: '街頭消防栓',
+    category: 'furniture',
+    description: '鮮紅的街頭安全消防栓，包含法蘭底座、兩側出水口、加壓接頭與頂端閥帽。',
+    defaultDimensions: { width: 35, height: 60, depth: 35 },
+    defaultColor: '#EF4444', // 醒目火紅
+    iconName: 'Flame',
+    geometryType: 'hydrant',
+    createGeometry: (dim) => createHydrantGeometry(dim.width, dim.height, dim.depth)
+  },
+
+  // === 街道動物夥伴類 ===
+  {
+    type: 'dog',
+    name: '散步小狗',
+    category: 'animal',
+    description: '在街道上悠閒散步的毛小孩，昂首挺胸、直立雙耳與向上搖擺的俏皮尾巴。',
+    defaultDimensions: { width: 40, height: 55, depth: 70 },
+    defaultColor: '#D97706', // 柴犬金黃
+    iconName: 'Dog',
+    geometryType: 'dog',
+    createGeometry: (dim) => createDogGeometry(dim.width, dim.height, dim.depth)
+  },
+  {
+    type: 'cat',
+    name: '街道小貓',
+    category: 'animal',
+    description: '靈動穿梭街角的可愛貓咪，流線拱背身軀、敏捷四肢與優雅的 S 型翹尾。',
+    defaultDimensions: { width: 30, height: 45, depth: 55 },
+    defaultColor: '#64748B', // 灰斑貓紋
+    iconName: 'Cat',
+    geometryType: 'cat',
+    createGeometry: (dim) => createCatGeometry(dim.width, dim.height, dim.depth)
   }
 ];

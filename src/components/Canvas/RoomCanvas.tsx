@@ -327,13 +327,6 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
           const cornerPts = projectWallObjectCorners(obj.wallAnchor, corners);
           // [pBL, pBR, pTR, pTL]
           const [pBL, pBR, pTR, pTL] = cornerPts;
-
-          const minX = Math.min(pBL.x, pBR.x, pTR.x, pTL.x);
-          const maxX = Math.max(pBL.x, pBR.x, pTR.x, pTL.x);
-          const minY = Math.min(pBL.y, pBR.y, pTR.y, pTL.y);
-          const maxY = Math.max(pBL.y, pBR.y, pTR.y, pTL.y);
-          const boxW = Math.max(1, maxX - minX);
-          const boxH = Math.max(1, maxY - minY);
           const clipId = `wall-clip-${obj.id}`;
 
           return (
@@ -360,20 +353,6 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
                 strokeWidth="2"
                 strokeLinejoin="round"
               />
-
-              {/* 若有自訂插圖 (Nano Banana 故事繪本素材) 進行透視多邊形剪裁渲染 */}
-              {obj.imageUrl && (
-                <g clipPath={`url(#${clipId})`} className="pointer-events-none">
-                  <image
-                    href={obj.imageUrl}
-                    x={minX}
-                    y={minY}
-                    width={boxW}
-                    height={boxH}
-                    preserveAspectRatio={obj.wallAnchor.wall === 'back' ? 'xMidYMid slice' : 'none'}
-                  />
-                </g>
-              )}
 
               {/* 依物件種類渲染生動細節 */}
               {obj.geometryType.includes('window') && (
@@ -512,49 +491,12 @@ export const RoomCanvas: React.FC<RoomCanvasProps> = ({
               />
 
               {/* 各面渲染 */}
-              {original.imageUrl ? (
-                (() => {
-                  const clipId = `floor-clip-${original.id}`;
-                  const minX = proj.boundingBox.minX;
-                  const minY = proj.boundingBox.minY;
-                  const boxW = proj.boundingBox.width;
-                  const boxH = proj.boundingBox.height;
-                  const topFace = proj.faces.find(f => f.name.includes('頂') || f.id.includes('top')) || proj.faces[0];
-                  const ptsStr = topFace.points.map(p => `${p.x},${p.y}`).join(' ');
-                  return (
-                    <g className="pointer-events-none">
-                      <defs>
-                        <clipPath id={clipId}>
-                          <polygon points={ptsStr} />
-                        </clipPath>
-                      </defs>
-                      <g clipPath={`url(#${clipId})`}>
-                        <image
-                          href={original.imageUrl}
-                          x={minX}
-                          y={minY}
-                          width={boxW}
-                          height={boxH}
-                          preserveAspectRatio="none"
-                        />
-                      </g>
-                      <polygon
-                        points={ptsStr}
-                        fill="none"
-                        stroke={original.secondaryColor || '#b45309'}
-                        strokeWidth="2.5"
-                      />
-                    </g>
-                  );
-                })()
-              ) : (
-                <RoomFurnitureRenderer
-                  original={original}
-                  proj={proj}
-                  camera={camera}
-                  getSurfaceFill={getSurfaceFill}
-                />
-              )}
+              <RoomFurnitureRenderer
+                original={original}
+                proj={proj}
+                camera={camera}
+                getSurfaceFill={getSurfaceFill}
+              />
 
               {/* 選取狀態指示外框 */}
               {isSelected && (

@@ -322,7 +322,65 @@ export const RoomFurnitureRenderer: React.FC<RoomFurnitureRendererProps> = ({
     );
   }
 
-  // 8. 預設多邊形渲染 (Cube 等，支援外觀造型裝飾)
+  // 8. 幾何編織羊毛地毯 (Woven Carpet / Rug)
+  if (type === 'room-rug' || type === 'rug' || type === 'bear-rug') {
+    const mainColor = original.color || '#fef3c7';
+    const borderColor = original.secondaryColor || '#b45309';
+
+    const pFBL = interp3D(0, 0, 0);
+    const pFBR = interp3D(1, 0, 0);
+    const pBBR = interp3D(1, 0, 1);
+    const pBBL = interp3D(0, 0, 1);
+
+    const innerFBL = interp3D(0.1, 0, 0.1);
+    const innerFBR = interp3D(0.9, 0, 0.1);
+    const innerBBR = interp3D(0.9, 0, 0.9);
+    const innerBBL = interp3D(0.1, 0, 0.9);
+
+    const centerFBL = interp3D(0.25, 0, 0.25);
+    const centerFBR = interp3D(0.75, 0, 0.25);
+    const centerBBR = interp3D(0.75, 0, 0.75);
+    const centerBBL = interp3D(0.25, 0, 0.75);
+
+    return (
+      <g className="furniture-rug">
+        {/* 地毯外框本體 */}
+        {quad(pFBL, pFBR, pBBR, pBBL, borderColor, '#78350f', 1.5)}
+        {/* 內嵌柔和織紋面 */}
+        {quad(innerFBL, innerFBR, innerBBR, innerBBL, mainColor, borderColor, 1.2)}
+        {/* 中心幾何菱形飾紋 */}
+        {quad(centerFBL, centerFBR, centerBBR, centerBBL, borderColor, '#92400e', 1)}
+        <polygon
+          points={polyPts([
+            interp3D(0.5, 0, 0.25),
+            interp3D(0.75, 0, 0.5),
+            interp3D(0.5, 0, 0.75),
+            interp3D(0.25, 0, 0.5)
+          ])}
+          fill={mainColor}
+          stroke={borderColor}
+          strokeWidth="1.2"
+        />
+        {/* 前端流蘇穗子 (Tassels) */}
+        {[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9].map((pos, idx) => {
+          const pt = interp3D(pos, 0, 0);
+          return (
+            <line
+              key={`tassel-f-${idx}`}
+              x1={pt.x}
+              y1={pt.y}
+              x2={pt.x}
+              y2={pt.y + 4}
+              stroke="#d97706"
+              strokeWidth="1.5"
+            />
+          );
+        })}
+      </g>
+    );
+  }
+
+  // 9. 預設多邊形渲染 (Cube 等)
   return (
     <g className="furniture-generic-block">
       {proj.faces

@@ -59,7 +59,7 @@ export interface WallAnchor {
   heightV: number;
 }
 
-export type ObjectCategory = 'geometric' | 'furniture' | 'nature' | 'wall' | 'custom';
+export type ObjectCategory = 'geometric' | 'furniture' | 'nature' | 'wall' | 'custom' | 'vehicle' | 'building' | 'animal';
 
 export interface ObjectDimensions {
   width: number;

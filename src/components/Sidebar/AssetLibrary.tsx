@@ -15,6 +15,15 @@ import {
   Milestone,
   User,
   Trees,
+  Car,
+  Bus,
+  Truck,
+  Building2,
+  Store,
+  Lamp,
+  Flame,
+  Dog,
+  Cat,
   PlusCircle,
   Shapes,
   Sparkles
@@ -47,6 +56,15 @@ export const AssetLibrary: React.FC<AssetLibraryProps> = ({
       case 'Milestone': return <Milestone className="w-5 h-5 text-slate-500" />;
       case 'User': return <User className="w-5 h-5 text-orange-500" />;
       case 'Trees': return <Trees className="w-5 h-5 text-green-500" />;
+      case 'Car': return <Car className="w-5 h-5 text-blue-600" />;
+      case 'Bus': return <Bus className="w-5 h-5 text-emerald-600" />;
+      case 'Truck': return <Truck className="w-5 h-5 text-red-600" />;
+      case 'Building2': return <Building2 className="w-5 h-5 text-sky-600" />;
+      case 'Store': return <Store className="w-5 h-5 text-amber-600" />;
+      case 'Lamp': return <Lamp className="w-5 h-5 text-slate-600" />;
+      case 'Flame': return <Flame className="w-5 h-5 text-red-500" />;
+      case 'Dog': return <Dog className="w-5 h-5 text-amber-600" />;
+      case 'Cat': return <Cat className="w-5 h-5 text-slate-600" />;
       default: return <Box className="w-5 h-5 text-slate-500" />;
     }
   };
@@ -82,46 +100,76 @@ export const AssetLibrary: React.FC<AssetLibraryProps> = ({
       </div>
 
       {/* 分類標籤切換 */}
-      <div className="flex px-3 pt-3 gap-1 border-b border-slate-100 pb-2">
+      <div className="flex px-3 pt-2.5 gap-1.5 border-b border-slate-100 pb-2.5 overflow-x-auto flex-wrap">
         <button
           onClick={() => setActiveCategory('all')}
-          className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
+          className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all ${
             activeCategory === 'all'
               ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-blue-50'
+              : 'text-slate-600 bg-slate-100 hover:bg-blue-50'
           }`}
         >
           🌟 全部
         </button>
         <button
-          onClick={() => setActiveCategory('geometric')}
-          className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
-            activeCategory === 'geometric'
+          onClick={() => setActiveCategory('vehicle')}
+          className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all ${
+            activeCategory === 'vehicle'
               ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-blue-50'
+              : 'text-slate-600 bg-slate-100 hover:bg-blue-50'
           }`}
         >
-          🔷 幾何
+          🚗 車輛
+        </button>
+        <button
+          onClick={() => setActiveCategory('building')}
+          className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all ${
+            activeCategory === 'building'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 bg-slate-100 hover:bg-blue-50'
+          }`}
+        >
+          🏢 建築
         </button>
         <button
           onClick={() => setActiveCategory('furniture')}
-          className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
+          className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all ${
             activeCategory === 'furniture'
               ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-blue-50'
+              : 'text-slate-600 bg-slate-100 hover:bg-blue-50'
           }`}
         >
-          🪑 生活
+          🪑 生活設施
+        </button>
+        <button
+          onClick={() => setActiveCategory('animal')}
+          className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all ${
+            activeCategory === 'animal'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 bg-slate-100 hover:bg-blue-50'
+          }`}
+        >
+          🐕 動物
         </button>
         <button
           onClick={() => setActiveCategory('nature')}
-          className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all ${
+          className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all ${
             activeCategory === 'nature'
               ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-blue-50'
+              : 'text-slate-600 bg-slate-100 hover:bg-blue-50'
           }`}
         >
-          🌳 角色
+          🌳 自然人物
+        </button>
+        <button
+          onClick={() => setActiveCategory('geometric')}
+          className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all ${
+            activeCategory === 'geometric'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 bg-slate-100 hover:bg-blue-50'
+          }`}
+        >
+          🔷 幾何
         </button>
       </div>
 

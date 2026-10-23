@@ -103,52 +103,6 @@ export const RoomInspector: React.FC<RoomInspectorProps> = ({
         </div>
 
         <div className="p-3 space-y-3.5">
-          {/* Nano Banana 故事繪本插畫素材庫選擇 */}
-          {(selectedObject.category === 'wall' || selectedObject.geometryType.includes('painting') || selectedObject.geometryType.includes('window') || selectedObject.geometryType.includes('carpet')) && (
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-3 rounded-2xl border border-amber-200 shadow-xs space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold text-amber-950 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-amber-600" />
-                  <span>繪本插圖貼畫 (Nano Banana)</span>
-                </span>
-                <span className="text-[10px] text-amber-700 font-bold bg-amber-100 px-2 py-0.5 rounded-full">
-                  生動插畫
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                {[
-                  { id: 'cat', name: '🐱 太空喵喵', url: './assets/images/painting_cat_astronaut.jpg' },
-                  { id: 'dino', name: '🦖 派對恐龍', url: './assets/images/painting_cute_dino.jpg' },
-                  { id: 'meadow', name: '🌈 彩虹草原', url: './assets/images/window_rainbow_meadow.jpg' },
-                  { id: 'bear', name: '🐻 萌萌小熊', url: './assets/images/rug_cute_bear.jpg' }
-                ].map(item => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => onUpdateObject({ ...selectedObject, imageUrl: item.url })}
-                    className={`flex items-center space-x-1.5 p-1.5 rounded-xl border text-left transition-all ${
-                      selectedObject.imageUrl === item.url
-                        ? 'bg-amber-500 text-white border-amber-600 font-bold shadow-xs'
-                        : 'bg-white text-slate-700 border-amber-200/80 hover:bg-amber-100/60'
-                    }`}
-                  >
-                    <img src={item.url} alt={item.name} className="w-8 h-8 rounded-lg object-cover shrink-0 border border-black/10" />
-                    <span className="text-[11px] font-bold truncate">{item.name}</span>
-                  </button>
-                ))}
-              </div>
-              {selectedObject.imageUrl && (
-                <button
-                  type="button"
-                  onClick={() => onUpdateObject({ ...selectedObject, imageUrl: undefined })}
-                  className="text-[11px] text-amber-800 hover:text-amber-950 underline font-medium block pt-0.5 text-right"
-                >
-                  ✖ 移除插圖，改用經典純色
-                </button>
-              )}
-            </div>
-          )}
-
           {/* 牆面物件特定控制 */}
           {wallAnchor ? (
             <div className="space-y-4">

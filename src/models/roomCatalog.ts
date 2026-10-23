@@ -19,104 +19,33 @@ export interface RoomAssetTemplate {
 }
 
 export const ROOM_ASSET_CATALOG: RoomAssetTemplate[] = [
-  // === 童趣故事插畫掛畫 (Nano Banana 繪本藝術) ===
-  {
-    type: 'cat-space-painting',
-    name: '🐱 太空喵喵冒險掛畫',
-    category: 'wall',
-    description: '由 Nano Banana 生成的可愛太空貓咪繪本插畫，掛在牆上超吸睛！',
-    defaultDimensions: { width: 140, height: 95, depth: 5 },
-    defaultColor: '#1e1b4b',
-    secondaryColor: '#f59e0b',
-    iconName: 'Image',
-    isWallObject: true,
-    imageUrl: './assets/images/painting_cat_astronaut.jpg',
-    defaultWallAnchor: {
-      wall: 'back',
-      u: 0.35,
-      v: 0.45,
-      widthU: 0.32,
-      heightV: 0.35
-    }
-  },
-  {
-    type: 'dino-party-painting',
-    name: '🦖 派對小恐龍掛畫',
-    category: 'wall',
-    description: '由 Nano Banana 生成的可愛恐龍派對繪本插畫，給房間滿滿活力！',
-    defaultDimensions: { width: 90, height: 130, depth: 5 },
-    defaultColor: '#064e3b',
-    secondaryColor: '#fbbf24',
-    iconName: 'Frame',
-    isWallObject: true,
-    imageUrl: './assets/images/painting_cute_dino.jpg',
-    defaultWallAnchor: {
-      wall: 'right',
-      u: 0.3,
-      v: 0.35,
-      widthU: 0.25,
-      heightV: 0.45
-    }
-  },
-  {
-    type: 'rainbow-window',
-    name: '🌈 彩虹草原景觀窗',
-    category: 'wall',
-    description: '窗外能看到美麗的陽光彩虹與綠油油大草原，好想跳出去玩！',
-    defaultDimensions: { width: 120, height: 120, depth: 8 },
-    defaultColor: '#38bdf8',
-    secondaryColor: '#ffffff',
-    iconName: 'AppWindow',
-    isWallObject: true,
-    imageUrl: './assets/images/window_rainbow_meadow.jpg',
-    defaultWallAnchor: {
-      wall: 'left',
-      u: 0.35,
-      v: 0.4,
-      widthU: 0.32,
-      heightV: 0.45
-    }
-  },
-  {
-    type: 'bear-rug',
-    name: '🐻 萌萌小熊圓地毯',
-    category: 'furniture',
-    description: '鋪在房間地板上的溫暖小熊地毯，讓房間變得超級溫馨可愛！',
-    defaultDimensions: { width: 130, height: 10, depth: 130 },
-    defaultColor: '#fef3c7',
-    secondaryColor: '#b45309',
-    iconName: 'Shapes',
-    imageUrl: './assets/images/rug_cute_bear.jpg'
-  },
-
-  // === 牆面物件 (掛畫、門窗、時鐘) ===
+  // === 牆面物件 (實木油畫、採光窗、實木門、壁鐘) ===
   {
     type: 'landscape-painting',
-    name: '橫向風景掛畫',
+    name: '橫向古典油畫',
     category: 'wall',
-    description: '經典橫向藝術掛畫，掛在後牆或側牆，增添室內空間美感。',
+    description: '實木金邊畫框與古典風景油畫，增添室內空間美感。',
     defaultDimensions: { width: 140, height: 85, depth: 5 },
-    defaultColor: '#38BDF8',
-    secondaryColor: '#D97706',
+    defaultColor: '#0284c7',
+    secondaryColor: '#d97706',
     iconName: 'Image',
     isWallObject: true,
-    imageUrl: './assets/images/painting_cat_astronaut.jpg',
     defaultWallAnchor: {
       wall: 'back',
       u: 0.35,
       v: 0.45,
       widthU: 0.3,
-      heightV: 0.3
+      heightV: 0.32
     }
   },
   {
     type: 'portrait-painting',
-    name: '直向藝術掛畫',
+    name: '直向藝術油畫',
     category: 'wall',
-    description: '直式高雅掛畫，非常適合裝飾右牆或後牆兩側。',
+    description: '直式高雅油畫框，精緻木框線條適合裝飾側牆。',
     defaultDimensions: { width: 75, height: 120, depth: 5 },
-    defaultColor: '#A855F7',
-    secondaryColor: '#F59E0B',
+    defaultColor: '#a855f7',
+    secondaryColor: '#f59e0b',
     iconName: 'Frame',
     isWallObject: true,
     defaultWallAnchor: {
@@ -129,12 +58,12 @@ export const ROOM_ASSET_CATALOG: RoomAssetTemplate[] = [
   },
   {
     type: 'room-window',
-    name: '牆面景觀窗',
+    name: '牆面景觀採光窗',
     category: 'wall',
-    description: '室內明亮採光窗，帶有十字窗欞與美麗天藍窗色。',
+    description: '室內明亮採光窗，帶有十字窗欞與逼真天藍玻璃反光。',
     defaultDimensions: { width: 110, height: 110, depth: 8 },
-    defaultColor: '#60A5FA',
-    secondaryColor: '#FFFFFF',
+    defaultColor: '#60a5fa',
+    secondaryColor: '#ffffff',
     iconName: 'AppWindow',
     isWallObject: true,
     defaultWallAnchor: {
@@ -149,10 +78,10 @@ export const ROOM_ASSET_CATALOG: RoomAssetTemplate[] = [
     type: 'room-door',
     name: '室內實木門',
     category: 'wall',
-    description: '通往走廊或房間的木門，緊貼牆面底端，頂邊朝透視點收斂。',
+    description: '通往走廊的雙嵌板實木門，帶有金屬門把手。',
     defaultDimensions: { width: 90, height: 180, depth: 8 },
-    defaultColor: '#B45309',
-    secondaryColor: '#F59E0B',
+    defaultColor: '#b45309',
+    secondaryColor: '#f59e0b',
     iconName: 'DoorClosed',
     isWallObject: true,
     defaultWallAnchor: {
@@ -167,10 +96,10 @@ export const ROOM_ASSET_CATALOG: RoomAssetTemplate[] = [
     type: 'wall-clock',
     name: '圓形壁掛時鐘',
     category: 'wall',
-    description: '客廳必備的掛鐘，指引美好的學習時光。',
+    description: '簡約大方的刻度壁鐘，指針朝向透視深度方向。',
     defaultDimensions: { width: 50, height: 50, depth: 5 },
-    defaultColor: '#EF4444',
-    secondaryColor: '#FFFFFF',
+    defaultColor: '#ef4444',
+    secondaryColor: '#ffffff',
     iconName: 'Clock',
     isWallObject: true,
     defaultWallAnchor: {
@@ -180,6 +109,19 @@ export const ROOM_ASSET_CATALOG: RoomAssetTemplate[] = [
       widthU: 0.12,
       heightV: 0.18
     }
+  },
+
+  // === 地面家具與織品 ===
+  {
+    type: 'room-rug',
+    name: '幾何織品地毯',
+    category: 'furniture',
+    description: '鋪設於地板的純羊毛織品地毯，具有菱形織紋與流蘇邊飾。',
+    defaultDimensions: { width: 140, height: 5, depth: 140 },
+    defaultColor: '#fef3c7',
+    secondaryColor: '#b45309',
+    iconName: 'Shapes',
+    isWallObject: false
   },
 
   // === 室內家具 (地面立體物件) ===
